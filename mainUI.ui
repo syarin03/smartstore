@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1148</width>
+    <height>731</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QStackedWidget" name="Page">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>10</y>
+      <width>1131</width>
+      <height>711</height>
+     </rect>
+    </property>
+    <property name="currentIndex">
+     <number>1</number>
+    </property>
+    <widget class="QWidget" name="p_intro">
+     <widget class="QPushButton" name="btn_join">
+      <property name="geometry">
+       <rect>
+        <x>640</x>
+        <y>260</y>
+        <width>75</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>회원가입</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btn_login">
+      <property name="geometry">
+       <rect>
+        <x>530</x>
+        <y>260</y>
+        <width>75</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>로그인</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="p_join">
+     <widget class="QPushButton" name="btn_check">
+      <property name="geometry">
+       <rect>
+        <x>540</x>
+        <y>200</y>
+        <width>75</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>중복확인</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="in_name">
+      <property name="geometry">
+       <rect>
+        <x>380</x>
+        <y>130</y>
+        <width>113</width>
+        <height>20</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="in_id">
+      <property name="geometry">
+       <rect>
+        <x>380</x>
+        <y>200</y>
+        <width>113</width>
+        <height>20</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="in_pass">
+      <property name="geometry">
+       <rect>
+        <x>380</x>
+        <y>270</y>
+        <width>113</width>
+        <height>20</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="in_pass_">
+      <property name="geometry">
+       <rect>
+        <x>380</x>
+        <y>340</y>
+        <width>113</width>
+        <height>20</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_5">
+      <property name="geometry">
+       <rect>
+        <x>620</x>
+        <y>170</y>
+        <width>331</width>
+        <height>71</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>&lt; 중복이면 Q메시지박스가 중복이라고 해야함</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btn_newuser">
+      <property name="geometry">
+       <rect>
+        <x>400</x>
+        <y>390</y>
+        <width>75</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>가입</string>
+      </property>
+     </widget>
+     <widget class="QWidget" name="">
+      <property name="geometry">
+       <rect>
+        <x>280</x>
+        <y>110</y>
+        <width>78</width>
+        <height>271</height>
+       </rect>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>이름</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_2">
+         <property name="text">
+          <string>아이디</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_3">
+         <property name="text">
+          <string>비밀번호</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_4">
+         <property name="text">
+          <string>비밀번호 확인</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </widget>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
