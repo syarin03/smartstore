@@ -14,6 +14,7 @@ from datetime import datetime, timedelta
 
 form_class = uic.loadUiType("mainUI.ui")[0]
 
+
 # 메인 윈도우
 class WindowClass(QMainWindow, form_class):
     user = None
@@ -23,23 +24,24 @@ class WindowClass(QMainWindow, form_class):
         super().__init__()
         self.setupUi(self)
 
-    # 초기 화면 설정
+        # 초기 화면 설정
         self.Page.setCurrentWidget(self.p_intro)
 
-    # 로그인 / 로그아웃
+        # 로그인 / 로그아웃
         self.btn_login.clicked.connect(self.login)
         # self.btn_logout.clicked.connect(self.logout) 로그아웃 아직 없음
         self.btn_join.clicked.connect(self.into_join)
 
-
     def login(self):
         print('로그인 함수')
+
     def logout(self):
         print('로그아웃 함수')
 
     def into_join(self):
         print('회원가입 페이지 이동')
         self.Page.setCurrentWidget(self.p_join)
+
 
 if __name__ == "__main__":
     # QApplication : 프로그램을 실행시켜주는 클래스
