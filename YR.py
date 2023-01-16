@@ -16,8 +16,15 @@ def product():
         sql = f"SELECT * FROM smart.product"
         cur.execute(sql)
         products = cur.fetchall()
+    # for item in products:
+    #     print(f'{item[0]}  - {item[1]} : {item[2]}원')
+    return products
 
-    for item in products:
-        print(f'{item[0]}  - {item[1]} : {item[2]}원')
-
+def product_matter():
+    with conn.cursor() as cur:
+        sql = f"SELECT * FROM smart.product"
+        cur.execute(sql)
+        products = cur.fetchall()
+    # for item in products:
+    #     print(f'{item[0]}  - {item[1]} : {item[2]}원')
     return products

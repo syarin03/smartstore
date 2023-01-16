@@ -46,7 +46,7 @@ class WindowClass(QMainWindow, form_class):
         print('회원가입 페이지 이동')
         self.Page.setCurrentWidget(self.p_join)
     def table_product(self):
-        print('테이블 표시')
+        print('상품 테이블 표시')
         rows = product()
         self.product_table.setRowCount(len(rows))
         col = 0
@@ -54,12 +54,22 @@ class WindowClass(QMainWindow, form_class):
             self.product_table.setItem(col, 0, QTableWidgetItem(row[1]))
             self.product_table.setItem(col, 1, QTableWidgetItem(str(row[2])))
             self.product_table.item(col, 0).setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
+            self.product_table.item(col, 1).setTextAlignment(Qt.AlignRight | Qt.AlignVCenter)
+
             col += 1
 
         # 테이블 헤더 폭 조정
         # self.product_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-        self.product_table.setColumnWidth(0, 130)
-        self.product_table.setColumnWidth(1, 100)
+        self.product_table.setColumnWidth(0, 145)
+        self.product_table.setColumnWidth(1, 85)
+        # 합쳐서 230
+
+    def product_matter(self):
+        print('상품재료 테이블 표시')
+        rows = product()
+        self.product_table.setRowCount(len(rows))
+
+        product_ingredient
 
 
 if __name__ == "__main__":
