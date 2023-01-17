@@ -5,7 +5,8 @@ import pymysql
 from PyQt5 import uic
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFontDatabase, QFont
-from PyQt5.QtWidgets import QMainWindow, QApplication, QTableWidgetItem, QAbstractItemView, QMessageBox
+from PyQt5.QtWidgets import QMainWindow, QApplication, QTableWidgetItem, QAbstractItemView, QMessageBox, QHeaderView, \
+    QPushButton
 from matplotlib import font_manager
 from datetime import datetime, timedelta
 
@@ -32,12 +33,13 @@ class WindowClass(QMainWindow, form_class):
 
         self.id_bool = False  # ID가 중복인지 확인하는 값
         self.loginbool = False  # 로그인 유무 확인 값
+
         # 초기 화면 설정
         self.Page.setCurrentWidget(self.p_intro)
-        # self.Page.setCurrentWidget(self.p_main)
+        self.Page.setCurrentWidget(self.p_main)
         self.page_login.setCurrentWidget(self.pl_01)
         self.Menu.setCurrentWidget(self.p_stock)
-        self.table_product()
+        self.product_listup()
 
         # 로그인 / 로그아웃
         self.btn_login.clicked.connect(self.login)
@@ -46,6 +48,11 @@ class WindowClass(QMainWindow, form_class):
         self.btn_check.clicked.connect(self.idcheck)
         self.btn_newuser.clicked.connect(self.signup)
         self.btn_gomain.clicked.connect(self.gohome)
+
+        # 상품추가
+        # self.btn_addProduct.clicked.connect(상품추가)
+        self.btn_add.clicked.connect(self.new_recipe_plus)
+        self.btn_del.clicked.connect(self.new_recipe_minus)
 
     def login(self):
         print('로그인 함수')
@@ -132,39 +139,119 @@ class WindowClass(QMainWindow, form_class):
             QMessageBox.information(self, '회원가입', '오류')
 
 
-    def table_product(self):
+    def product_listup(self):
         conn = pymysql.connect(host=self.HOST, port=self.PORT, user=self.USER, password=self.PASSWORD, db='smart', charset='utf8')
         with conn.cursor() as cur:
             sql = f"SELECT * FROM smart.product"
             cur.execute(sql)
             products = cur.fetchall()
 
-        self.product_table.setRowCount(len(products))
+        self.table_product.setRowCount(len(products))
+        # btn = lambda x : '판매 중지' if x == True else '판매 등록'
+        status = lambda x : '판매중' if x == True else '대기중'
+
         col = 0
         for row in products:
-            self.product_table.setItem(col, 0, QTableWidgetItem(row[1]))
-            self.product_table.setItem(col, 1, QTableWidgetItem(str(row[2])))
-            self.product_table.item(col, 0).setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
-            self.product_table.item(col, 1).setTextAlignment(Qt.AlignRight | Qt.AlignVCenter)
+            self.table_product.setItem(col, 0, QTableWidgetItem(row[1]))
+            self.table_product.setItem(col, 1, QTableWidgetItem(str(row[2])))
+            self.table_product.setItem(col, 2,  QTableWidgetItem(status(row[3])))
+
+            self.table_product.item(col, 0).setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
+            self.table_product.item(col, 1).setTextAlignment(Qt.AlignRight | Qt.AlignVCenter)
+            self.table_product.item(col, 2).setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
+            col += 1
+
+        # 테이블 헤더 폭 조정 : 합쳐서 300
+        # self.table_product.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self.table_product.setColumnWidth(0, 145)
+        self.table_product.setColumnWidth(1, 75)
+        self.table_product.setColumnWidth(2, 80)
+
+        # 테이블 이벤트
+        self.table_product.cellClicked.connect(self.product_matter)
+        self.btn_addProduct.clicked.connect(self.add_product)
+
+
+
+    def product_matter(self, row):
+        item = self.table_product.item(row, 0)
+        item = item.text()
+        print(f'@ {item} - 재료표시')
+        conn = pymysql.connect(host=self.HOST, port=self.PORT, user=self.USER, password=self.PASSWORD, db='smart', charset='utf8')
+        with conn.cursor() as cur:
+            # 특정 메뉴의 레시피 (재료, 분량, 남은 재고, 1개당 분량)
+            sql = f"SELECT A.ingre_name, A.consum, B.stock, B.tun FROM recipe A LEFT JOIN ingredients B ON A.ingre_name = B.ingre_name WHERE A.prod_name = '{item}'"
+            cur.execute(sql)
+            ingre = cur.fetchall()
+
+        self.table_ingredient.setRowCount(len(ingre))
+
+        col = 0
+        for row in ingre:
+            self.table_ingredient.setItem(col, 0, QTableWidgetItem(row[0]))
+            self.table_ingredient.setItem(col, 1, QTableWidgetItem(str(row[1])))
+            self.table_ingredient.setItem(col, 2, QTableWidgetItem(str(row[2])))
+            # self.table_ingredient.setItem(col, 3, QTableWidgetItem(str(row[3])))
+
+            self.table_ingredient.item(col, 0).setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
+            self.table_ingredient.item(col, 1).setTextAlignment(Qt.AlignRight | Qt.AlignVCenter)
+            self.table_ingredient.item(col, 2).setTextAlignment(Qt.AlignRight | Qt.AlignVCenter)
+            # self.table_ingredient.item(col, 3).setTextAlignment(Qt.AlignRight | Qt.AlignVCenter)
 
             col += 1
 
-        # 테이블 헤더 폭 조정 : 합쳐서 230
-        # self.product_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-        self.product_table.setColumnWidth(0, 145)
-        self.product_table.setColumnWidth(1, 85)
+        self.table_ingredient.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
 
-    def product_matter(self):
-        print('상품재료 테이블 표시')
-        conn = pymysql.connect(host=self.HOST, port=self.PORT, user=self.USER, password=self.PASSWORD, db='smart', charset='utf8')
-        with conn.cursor() as cur:
-            sql = f"SELECT * FROM smart.product"
-            cur.execute(sql)
-            products = cur.fetchall()
+    def new_recipe_plus(self):
+        row = self.table_new_recipe.rowCount() + 1
+        self.table_new_recipe.setRowCount(row)
 
-        self.product_ingredient.setRowCount(len(products))
+    def new_recipe_minus(self):
+        rowCnt = self.table_new_recipe.rowCount()
+        select = self.table_new_recipe.currentRow()
+        print(f'상품재료 {select}행 삭제')
 
+        val = lambda x : x.text() if x is not None else ''
 
+        # 행 값 읽어서 리스트에 저장
+        rowList = []
+        for row in range(rowCnt):
+
+            col1 = val(self.table_new_recipe.item(row, 0))
+            print(col1)
+            col2 = val(self.table_new_recipe.item(row, 1))
+            print(col2)
+
+            # if col1 != None and col2 != None:
+            #     print(f'{row}번 행 {col1} / {col2}')
+
+            print(f'{row}번 행 {col1} / {col2}')
+            rowList.append([row, col1, col2])
+
+        print(f'행 리스트 : {rowList}')
+        rowList.pop(select) # 선택된 행의 값 리스트에서 삭제
+        print(f'삭제 후 리스트 : {rowList}')
+
+        # 행 수 변경
+        rowCnt = rowCnt- 1
+        self.table_new_recipe.setRowCount(rowCnt)
+
+        # 셀에 리스트 값 할당
+        for row in range(len(rowList)):
+            if row >= select:
+                self.table_new_recipe.setItem(row, 0, QTableWidgetItem(rowList[row][1]))
+                self.table_new_recipe.setItem(row, 1, QTableWidgetItem(rowList[row][2]))
+
+    def add_product(self):
+        if self. in_new_item is not None:
+            product = self.in_new_item.text()
+            print(f'@ 상품 {product} 추가')
+
+        # 상품 테이블에 product 추가
+
+        # 레시피 테이블에 재료들 추가
+
+        # 기존에 없던 재료라면 재료 테이블에도 추가
 
 
 if __name__ == "__main__":

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1148</width>
-    <height>731</height>
+    <width>991</width>
+    <height>718</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,9 +17,9 @@
    <widget class="QStackedWidget" name="Page">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>10</y>
-      <width>1131</width>
+      <x>0</x>
+      <y>0</y>
+      <width>991</width>
       <height>711</height>
      </rect>
     </property>
@@ -371,7 +371,7 @@
         <x>10</x>
         <y>10</y>
         <width>971</width>
-        <height>681</height>
+        <height>691</height>
        </rect>
       </property>
       <property name="layoutDirection">
@@ -381,7 +381,7 @@
        <bool>false</bool>
       </property>
       <property name="styleSheet">
-       <string notr="true">background-color:rgb(221, 227, 240)</string>
+       <string notr="true">background-color:rgb(255, 255, 255)</string>
       </property>
       <property name="currentIndex">
        <number>3</number>
@@ -392,7 +392,7 @@
          <x>0</x>
          <y>0</y>
          <width>971</width>
-         <height>577</height>
+         <height>587</height>
         </rect>
        </property>
        <attribute name="label">
@@ -435,7 +435,7 @@
          <x>0</x>
          <y>0</y>
          <width>971</width>
-         <height>577</height>
+         <height>587</height>
         </rect>
        </property>
        <attribute name="label">
@@ -448,7 +448,7 @@
          <x>0</x>
          <y>0</y>
          <width>971</width>
-         <height>577</height>
+         <height>587</height>
         </rect>
        </property>
        <attribute name="label">
@@ -461,19 +461,19 @@
          <x>0</x>
          <y>0</y>
          <width>971</width>
-         <height>577</height>
+         <height>587</height>
         </rect>
        </property>
        <attribute name="label">
         <string>상품 관리</string>
        </attribute>
-       <widget class="QTableWidget" name="product_table">
+       <widget class="QTableWidget" name="table_product">
         <property name="geometry">
          <rect>
-          <x>10</x>
+          <x>20</x>
           <y>10</y>
-          <width>281</width>
-          <height>541</height>
+          <width>351</width>
+          <height>371</height>
          </rect>
         </property>
         <property name="autoFillBackground">
@@ -495,14 +495,19 @@
           <string>가격</string>
          </property>
         </column>
+        <column>
+         <property name="text">
+          <string>상태</string>
+         </property>
+        </column>
        </widget>
-       <widget class="QTableWidget" name="product_ingredient">
+       <widget class="QTableWidget" name="table_ingredient">
         <property name="geometry">
          <rect>
-          <x>300</x>
-          <y>10</y>
-          <width>201</width>
-          <height>541</height>
+          <x>20</x>
+          <y>400</y>
+          <width>351</width>
+          <height>161</height>
          </rect>
         </property>
         <property name="autoFillBackground">
@@ -521,9 +526,128 @@
         </column>
         <column>
          <property name="text">
-          <string>분량</string>
+          <string>분량(ml)</string>
          </property>
         </column>
+        <column>
+         <property name="text">
+          <string>재고(병)</string>
+         </property>
+        </column>
+       </widget>
+       <widget class="QGroupBox" name="groupBox">
+        <property name="geometry">
+         <rect>
+          <x>570</x>
+          <y>250</y>
+          <width>381</width>
+          <height>321</height>
+         </rect>
+        </property>
+        <property name="title">
+         <string>상품 추가</string>
+        </property>
+        <widget class="QTableWidget" name="table_new_recipe">
+         <property name="geometry">
+          <rect>
+           <x>20</x>
+           <y>90</y>
+           <width>211</width>
+           <height>192</height>
+          </rect>
+         </property>
+         <column>
+          <property name="text">
+           <string>재료</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>분량</string>
+          </property>
+         </column>
+        </widget>
+        <widget class="QLabel" name="label_8">
+         <property name="geometry">
+          <rect>
+           <x>30</x>
+           <y>50</y>
+           <width>41</width>
+           <height>16</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>상품명</string>
+         </property>
+        </widget>
+        <widget class="QLineEdit" name="in_new_item">
+         <property name="geometry">
+          <rect>
+           <x>80</x>
+           <y>50</y>
+           <width>113</width>
+           <height>20</height>
+          </rect>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">background-color: rgb(255, 255, 255)</string>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="btn_addProduct">
+         <property name="geometry">
+          <rect>
+           <x>270</x>
+           <y>260</y>
+           <width>75</width>
+           <height>23</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>상품 추가</string>
+         </property>
+        </widget>
+        <widget class="QWidget" name="">
+         <property name="geometry">
+          <rect>
+           <x>240</x>
+           <y>90</y>
+           <width>77</width>
+           <height>83</height>
+          </rect>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_2">
+          <item>
+           <widget class="QPushButton" name="btn_add">
+            <property name="styleSheet">
+             <string notr="true"/>
+            </property>
+            <property name="text">
+             <string>추가</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="btn_del">
+            <property name="styleSheet">
+             <string notr="true">background-table:rgb(255, 255, 255)</string>
+            </property>
+            <property name="text">
+             <string>삭제</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="btn_addPro_reset">
+            <property name="styleSheet">
+             <string notr="true">background-table:rgb(255, 255, 255)</string>
+            </property>
+            <property name="text">
+             <string>초기화</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
        </widget>
       </widget>
      </widget>
