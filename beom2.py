@@ -7,6 +7,7 @@ from PyQt5.QtGui import QFontDatabase, QFont
 from PyQt5.QtWidgets import QMainWindow, QApplication, QTableWidgetItem, QAbstractItemView, QMessageBox
 from matplotlib import font_manager
 from datetime import datetime, timedelta
+import random
 
 # path = os.getcwd()
 # font_path = path + "\Pretendard-Light.otf"
@@ -28,6 +29,7 @@ class WindowClass(QMainWindow, form_class):
     # 초기 화면 설정
         self.Page.setCurrentWidget(self.p_intro)
         self.page_login.setCurrentWidget(self.pl_01)
+    # 시간
 
 
     # 로그인 / 로그아웃
@@ -38,6 +40,13 @@ class WindowClass(QMainWindow, form_class):
         self.btn_newuser.clicked.connect(self.signup)
         self.btn_gomain.clicked.connect(self.gohome)
         self.btn_logout.clicked.connect(self.logout)
+        self.btn_buy_random.clicked.connect(self.buy_random)
+        self.btn_order_management.clicked.connect(self.go_order_management)
+        self.btn_go_loginmain.clicked.connect(self.gohome)
+
+        self.order_num = 1111 # 시작 주문번호
+
+
 
     def login(self):
         print('로그인 함수')
@@ -56,7 +65,7 @@ class WindowClass(QMainWindow, form_class):
                                from smart.member \
                                where uid = '{id}' and upw = '{pw}';")  # 입력한id와 pw가 같은게있는지 db에서 검색
         rows = cur.fetchall()
-
+        con.close()
         if id =='' or pw=='':
             QMessageBox.information(self, 'Information Title', '빈칸을 채워주세요')
         elif rows == ():
@@ -69,7 +78,7 @@ class WindowClass(QMainWindow, form_class):
 
             QMessageBox.information(self, 'Information Title', '로그인완료')
             self.loginbool = True
-            self.page_login.setCurrentWidget(self.pl_02)
+            self.page_login.setCurrentWidget(self.pl_02)  ##로그인후 화면으로 전환
             self.label_loginid.setText(self.member_info[0][3])
 
     def logout(self):
@@ -99,7 +108,7 @@ class WindowClass(QMainWindow, form_class):
                        from smart.member \
                        where uid = '{id}';") #입력한id를 같은게있는지 db에서 검색
         rows = cur.fetchall()
-
+        con.close()
 
         if id == '':  #id가 공백인지 확인
             QMessageBox.information(self, 'Information Title', '아이디를 입력해주세요')
@@ -136,6 +145,7 @@ class WindowClass(QMainWindow, form_class):
                 rows = cur.fetchall()
                 QMessageBox.information(self, 'Information Title', '가입완료')
                 con.commit()
+                con.close()
                 self.Page.setCurrentWidget(self.p_intro)  #회원가입 완료후 메인화면으로
             elif self.id_bool == False:  #
                 QMessageBox.information(self, 'Information Title', '아이디 중복 확인을 해주세요')
@@ -144,6 +154,61 @@ class WindowClass(QMainWindow, form_class):
         except:
             QMessageBox.information(self, 'Information Title', '뭔가오류')
 
+    def buy_random(self):    ##랜덤주문 함수
+        self.now = datetime.now()
+        self.retrun_hms = self.now.strftime('%H:%M:%S')
+        self.retrun_YMD = self.now.strftime('%y/%m/%d')
+        print("랜덤주문")
+
+        ran2 = random.randint(1,3)  #주문자당 품목갯수 변수
+
+
+        HOST = '10.10.21.110'
+        PORT = 3306
+        USER = 'user_t'
+        PASSWORD = 'xlavmfhwprxm9'
+
+        self.order_num += 1
+        for i in range (0, ran2):
+            ran = random.randint(1, 20)  # 품목 랜덤 설정 변수
+            ran3 = random.randint(1, 4)  # 주문자의 품목당구매갯수 변수
+            con = pymysql.connect(host=HOST, port=PORT, user=USER, password=PASSWORD, db='smart', charset='utf8')
+            cur = con.cursor()  # db연결
+
+            cur.execute(f"SELECT * \
+                        from smart.product \
+                            where prod_num = '{ran}';")  # 입력한id를 같은게있는지 db에서 검색
+
+            self.retrun_hms = self.now.strftime('%H:%M:%S')
+            self.retrun_YMD = self.now.strftime('%Y-%m-%d %H:%M:%S')
+
+
+            self.order_info = cur.fetchall()
+            print(type(self.order_num))
+            print(type(self.retrun_YMD))
+            print(type(self.order_info[0][0]))
+
+            cur.execute(f"insert into smart.order (order_num, order_time, prod_num, quantity) \
+                                                    values ('{self.order_num}', '{self.retrun_YMD}', '{int(self.order_info[0][0])}', '{int(ran3)}');")
+            print(1)
+            con.commit()
+            con.close()
+
+
+
+
+
+
+
+
+    
+    def go_order_management(self):  ##주문관리 함수
+        print("주문관리")
+        self.Page.setCurrentWidget(self.p_order_management)
+        self.table_order_management.setColumnCount(6)
+        self.table_order_management2.setColumnCount(5)
+        self.table_order_management.setHorizontalHeaderLabels(["연번","주문번호","주문시간","제품명","수량","금액"])
+        self.table_order_management2.setHorizontalHeaderLabels(["제품명", "재료", "주문시간", "제품명", "수량"])
 
 
 

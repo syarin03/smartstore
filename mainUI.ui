@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>2</number>
     </property>
     <widget class="QWidget" name="p_intro">
      <widget class="QStackedWidget" name="page_login">
@@ -153,9 +153,22 @@
          <string>로그아웃</string>
         </property>
        </widget>
+       <widget class="QPushButton" name="btn_order_management">
+        <property name="geometry">
+         <rect>
+          <x>250</x>
+          <y>180</y>
+          <width>75</width>
+          <height>71</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>주문관리</string>
+        </property>
+       </widget>
       </widget>
      </widget>
-     <widget class="QPushButton" name="pushButton">
+     <widget class="QPushButton" name="btn_buy_random">
       <property name="geometry">
        <rect>
         <x>960</x>
@@ -165,7 +178,7 @@
        </rect>
       </property>
       <property name="text">
-       <string>랜덤판매</string>
+       <string>랜덤주문</string>
       </property>
      </widget>
     </widget>
@@ -300,6 +313,54 @@
       </property>
       <property name="text">
        <string>메인으로</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="p_order_management">
+     <widget class="QTableWidget" name="table_order_management">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>10</y>
+        <width>651</width>
+        <height>391</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QTableWidget" name="table_order_management2">
+      <property name="geometry">
+       <rect>
+        <x>700</x>
+        <y>110</y>
+        <width>341</width>
+        <height>291</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btn_order_receipt">
+      <property name="geometry">
+       <rect>
+        <x>700</x>
+        <y>30</y>
+        <width>111</width>
+        <height>51</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>주문접수 및 제작</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btn_go_loginmain">
+      <property name="geometry">
+       <rect>
+        <x>840</x>
+        <y>30</y>
+        <width>111</width>
+        <height>51</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>뒤로가기</string>
       </property>
      </widget>
     </widget>
