@@ -9,8 +9,6 @@ from PyQt5.QtWidgets import QMainWindow, QApplication, QTableWidgetItem, QAbstra
 from matplotlib import font_manager
 from datetime import datetime, timedelta
 
-from YR import *
-
 # path = os.getcwd()
 # font_path = path + "\Pretendard-Light.otf"
 # font = font_manager.FontProperties(fname=font_path).get_name()
@@ -135,7 +133,7 @@ class WindowClass(QMainWindow, form_class):
 
 
     def table_product(self):
-        conn = pymysql.connect(host=HOST, port=PORT, user=USER, password=PASSWORD, db='smart', charset='utf8')
+        conn = pymysql.connect(host=self.HOST, port=self.PORT, user=self.USER, password=self.PASSWORD, db='smart', charset='utf8')
         with conn.cursor() as cur:
             sql = f"SELECT * FROM smart.product"
             cur.execute(sql)
