@@ -43,7 +43,7 @@ class WindowClass(QMainWindow, form_class):
         self.btn_buy_random.clicked.connect(self.buy_random)
         self.btn_order_management.clicked.connect(self.go_order_management)
         self.btn_go_loginmain.clicked.connect(self.gohome)
-
+        self.table_order_management.cellClicked.connect(self.current_table_row_column)  ##주문관리 테이블위젯의 행,열을 받는 함수
         self.order_num = 1111 # 시작 주문번호
 
 
@@ -64,8 +64,9 @@ class WindowClass(QMainWindow, form_class):
         cur.execute(f"select smart.member.num \
                                from smart.member \
                                where uid = '{id}' and upw = '{pw}';")  # 입력한id와 pw가 같은게있는지 db에서 검색
+
         rows = cur.fetchall()
-        con.close()
+
         if id =='' or pw=='':
             QMessageBox.information(self, 'Information Title', '빈칸을 채워주세요')
         elif rows == ():
@@ -188,8 +189,8 @@ class WindowClass(QMainWindow, form_class):
             print(type(self.retrun_YMD))
             print(type(self.order_info[0][0]))
 
-            cur.execute(f"insert into smart.order (order_num, order_time, prod_num, quantity) \
-                                                    values ('{self.order_num}', '{self.retrun_YMD}', '{int(self.order_info[0][0])}', '{int(ran3)}');")
+            cur.execute(f"insert into smart.order (order_num, order_time, prod_name, quantity) \
+                                                    values ('{self.order_num}', '{self.retrun_YMD}', '{int(self.order_info[0][1])}', '{int(ran3)}');")
             print(1)
             con.commit()
             con.close()
@@ -204,11 +205,95 @@ class WindowClass(QMainWindow, form_class):
     
     def go_order_management(self):  ##주문관리 함수
         print("주문관리")
+
         self.Page.setCurrentWidget(self.p_order_management)
-        self.table_order_management.setColumnCount(6)
-        self.table_order_management2.setColumnCount(5)
-        self.table_order_management.setHorizontalHeaderLabels(["연번","주문번호","주문시간","제품명","수량","금액"])
-        self.table_order_management2.setHorizontalHeaderLabels(["제품명", "재료", "주문시간", "제품명", "수량"])
+
+
+
+        ## 주문목록 테이블위젯
+
+        HOST = '10.10.21.110'
+        PORT = 3306
+        USER = 'user_t'
+        PASSWORD = 'xlavmfhwprxm9'
+
+        con = pymysql.connect(host=HOST, port=PORT, user=USER, password=PASSWORD, db='smart', charset='utf8')
+        cur = con.cursor()  # db연결
+        cur.execute(f"SELECT * from smart.order \
+                        left join smart.product \
+                        ON smart.order.prod_num = smart.product.prod_num;")  #오더테이블 과 프로덕트테이블 조인하여 조회
+        rows = cur.fetchall()
+
+        cur.execute(f"SELECT count(num) from smart.order;") #주문 횟수가 얼마나 되는지 조회하는 쿼리문
+        len = cur.fetchall()
+
+        self.table_order_management.setHorizontalHeaderLabels(["주문번호", "주문시간", "제품명", "수량", "금액"])
+        self.table_order_management.setRowCount(len[0][0])
+        self.table_order_management.setColumnCount(5)
+
+        print(rows[0][2])
+        con.close()
+        col=0
+        for row in rows:
+
+
+            self.table_order_management.setItem(col, 0, QTableWidgetItem(str(row[1])))
+            self.table_order_management.setItem(col, 1, QTableWidgetItem(str(row[2])))
+            self.table_order_management.setItem(col, 2, QTableWidgetItem(str(row[6])))
+            self.table_order_management.setItem(col, 3, QTableWidgetItem(str(row[4])))
+            self.table_order_management.setItem(col, 4, QTableWidgetItem(str((row[7]*row[4]))))  ## 총금액
+
+            col += 1
+
+
+
+    def current_table_row_column(self):  #주문관리 테이블위젯의 행,열을 받고 자재관리 테이블위젯을 만들어주는 함수
+
+
+
+        a = self.table_order_management.currentRow()
+        b = self.table_order_management.currentColumn()
+        c = self.table_order_management.item(a,2)
+        HOST = '10.10.21.110'
+        PORT = 3306
+        USER = 'user_t'
+        PASSWORD = 'xlavmfhwprxm9'
+
+        con = pymysql.connect(host=HOST, port=PORT, user=USER, password=PASSWORD, db='smart', charset='utf8')
+        cur = con.cursor()  # db연결
+        cur.execute(f"SELECT * \
+                        from smart.recipe left join smart.ingredients \
+                            ON smart.recipe.ingre_name = smart.ingredients.ingre_name \
+                            where smart.recipe.prod_name = '{c.text()}';")  #  과 프로덕트테이블 조인하여 조회
+        rows2 = cur.fetchall()
+
+
+        cur.execute(f"SELECT count(prod_name) " \
+                    f"from smart.recipe \
+                    where prod_name = '{c.text()}'; ")  #제품의 제조에 필요한 재료가 몇개인지 조회하는 쿼리문
+
+
+        len = cur.fetchall()
+        print(rows2[0][2])
+        print(len[0][0])
+        con.close()
+
+        self.table_order_management2.setHorizontalHeaderLabels(["재료명", "재료소모량", "재료잔량", "제조가능수량"])
+        self.table_order_management2.setRowCount(len[0][0])
+        self.table_order_management2.setColumnCount(4)
+
+
+        col = 0
+
+        for row in rows2:
+            self.table_order_management2.setItem(col, 0, QTableWidgetItem(str(row[2])))
+            self.table_order_management2.setItem(col, 1, QTableWidgetItem(str(int(row[3]))))
+            self.table_order_management2.setItem(col, 2, QTableWidgetItem(str(int(row[7]*row[8]))))
+            self.table_order_management2.setItem(col, 3, QTableWidgetItem(str(int(((row[7] * row[8])%row[3])))))  ## 총금액
+
+
+            col += 1
+
 
 
 
