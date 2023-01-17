@@ -37,6 +37,7 @@ class WindowClass(QMainWindow, form_class):
         self.btn_check.clicked.connect(self.idcheck)
         self.btn_newuser.clicked.connect(self.signup)
         self.btn_gomain.clicked.connect(self.gohome)
+        self.btn_logout.clicked.connect(self.logout)
 
     def login(self):
         print('로그인 함수')
@@ -73,6 +74,8 @@ class WindowClass(QMainWindow, form_class):
 
     def logout(self):
         print('로그아웃 함수')
+        self.loginbool = False
+        self.page_login.setCurrentWidget(self.pl_01)
     def gohome(self):
         self.Page.setCurrentWidget(self.p_intro)
     def into_join(self):
