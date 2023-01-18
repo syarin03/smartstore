@@ -24,20 +24,20 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>2</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="p_intro">
      <widget class="QStackedWidget" name="page_login">
       <property name="geometry">
        <rect>
-        <x>290</x>
-        <y>170</y>
+        <x>160</x>
+        <y>140</y>
         <width>551</width>
         <height>371</height>
        </rect>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="pl_01">
        <widget class="QLabel" name="label_6">
@@ -179,6 +179,32 @@
       </property>
       <property name="text">
        <string>랜덤주문</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btn_auto_buy_start">
+      <property name="geometry">
+       <rect>
+        <x>830</x>
+        <y>160</y>
+        <width>101</width>
+        <height>71</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>자동주문시작</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btn_auto_buy_stop">
+      <property name="geometry">
+       <rect>
+        <x>970</x>
+        <y>160</y>
+        <width>101</width>
+        <height>71</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>자동주문종료</string>
       </property>
      </widget>
     </widget>
@@ -326,6 +352,36 @@
         <height>391</height>
        </rect>
       </property>
+      <column>
+       <property name="text">
+        <string>주문번호</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>주문시간</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>제품명</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>수량</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>금액</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>주문상태</string>
+       </property>
+      </column>
      </widget>
      <widget class="QTableWidget" name="table_order_management2">
       <property name="geometry">
@@ -336,6 +392,26 @@
         <height>291</height>
        </rect>
       </property>
+      <column>
+       <property name="text">
+        <string>재료명</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>재료소모량</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>재료잔량</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>제조가능수량</string>
+       </property>
+      </column>
      </widget>
      <widget class="QPushButton" name="btn_order_receipt">
       <property name="geometry">
