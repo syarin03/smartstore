@@ -313,10 +313,9 @@ class WindowClass(QMainWindow, form_class):
         # conn = pymysql.connect(host=self.HOST, port=self.PORT, user=self.USER, password=self.PASSWORD, db='smart', charset='utf8')
         # with conn.cursor() as cur:
         #     # 상품 테이블에 product 추가 --
-        #
+       #
 
             # 상품 번호 가져옴 --
-
             # 레시피 테이블에 상품번호 -- 재료번호 추가 --
 
 
