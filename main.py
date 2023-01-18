@@ -1,4 +1,5 @@
 import os
+import re
 import sys
 import time
 import pymysql
@@ -26,6 +27,8 @@ class WindowClass(QMainWindow, form_class):
     PORT = 3306
     USER = 'user_t'
     PASSWORD = 'xlavmfhwprxm9'
+
+    product = []
 
     def __init__(self):
         super().__init__()
@@ -151,8 +154,11 @@ class WindowClass(QMainWindow, form_class):
         status = lambda x : '판매중' if x == True else '대기중'
 
         col = 0
+        self.product = [] # 초기화
         for row in products:
             self.table_product.setItem(col, 0, QTableWidgetItem(row[1]))
+            # self.product에 상품명을 추가
+            self.product.append(row[1])
             self.table_product.setItem(col, 1, QTableWidgetItem(str(row[2])))
             self.table_product.setItem(col, 2,  QTableWidgetItem(status(row[3])))
 
@@ -179,8 +185,10 @@ class WindowClass(QMainWindow, form_class):
         print(f'@ {item} - 재료표시')
         conn = pymysql.connect(host=self.HOST, port=self.PORT, user=self.USER, password=self.PASSWORD, db='smart', charset='utf8')
         with conn.cursor() as cur:
-            # 특정 메뉴의 레시피 (재료, 분량, 남은 재고, 1개당 분량)
-            sql = f"SELECT A.ingre_name, A.consum, B.stock, B.tun FROM recipe A LEFT JOIN ingredients B ON A.ingre_name = B.ingre_name WHERE A.prod_name = '{item}'"
+            # 특정 메뉴의 레시피 (재료, 분량, 남은 재고)
+            sql = f"SELECT A.ingre_name, B.consum, A.stock  FROM ingredients A " \
+                  f"LEFT JOIN recipe B ON A.ingre_num = B.ingre_num " \
+                  f"WHERE prod_num = (SELECT prod_num FROM product WHERE prod_name = '{item}');"
             cur.execute(sql)
             ingre = cur.fetchall()
 
@@ -191,15 +199,12 @@ class WindowClass(QMainWindow, form_class):
             self.table_ingredient.setItem(col, 0, QTableWidgetItem(row[0]))
             self.table_ingredient.setItem(col, 1, QTableWidgetItem(str(row[1])))
             self.table_ingredient.setItem(col, 2, QTableWidgetItem(str(row[2])))
-            # self.table_ingredient.setItem(col, 3, QTableWidgetItem(str(row[3])))
 
             self.table_ingredient.item(col, 0).setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
             self.table_ingredient.item(col, 1).setTextAlignment(Qt.AlignRight | Qt.AlignVCenter)
             self.table_ingredient.item(col, 2).setTextAlignment(Qt.AlignRight | Qt.AlignVCenter)
-            # self.table_ingredient.item(col, 3).setTextAlignment(Qt.AlignRight | Qt.AlignVCenter)
 
             col += 1
-
         self.table_ingredient.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
 
     def new_recipe_plus(self):
@@ -218,19 +223,12 @@ class WindowClass(QMainWindow, form_class):
         for row in range(rowCnt):
 
             col1 = val(self.table_new_recipe.item(row, 0))
-            print(col1)
             col2 = val(self.table_new_recipe.item(row, 1))
-            print(col2)
 
-            # if col1 != None and col2 != None:
-            #     print(f'{row}번 행 {col1} / {col2}')
-
-            print(f'{row}번 행 {col1} / {col2}')
+            print(f'{row}번 행 | {col1} | {col2}')
             rowList.append([row, col1, col2])
 
-        print(f'행 리스트 : {rowList}')
         rowList.pop(select) # 선택된 행의 값 리스트에서 삭제
-        print(f'삭제 후 리스트 : {rowList}')
 
         # 행 수 변경
         rowCnt = rowCnt- 1
@@ -243,15 +241,83 @@ class WindowClass(QMainWindow, form_class):
                 self.table_new_recipe.setItem(row, 1, QTableWidgetItem(rowList[row][2]))
 
     def add_product(self):
-        if self. in_new_item is not None:
+        if self.in_new_item is not None :
             product = self.in_new_item.text()
-            print(f'@ 상품 {product} 추가')
+            # 상품이 이미 등록되어있는지 확인
+            if product in self.product:
+                QMessageBox.warning(self, '알림', '이미 등록된 상품입니다.')
+                return
+        print(f'@ 상품 {product} 추가')
 
-        # 상품 테이블에 product 추가
+        # 행 값 읽어서 리스트에 저장
+        rowCnt = self.table_new_recipe.rowCount()
+        # 행이 하나도 없다면 종료
+        if rowCnt == 0:
+            QMessageBox.warning(self, '알림', '최소 1개의 레시피를 등록해주세요')
+            return
 
-        # 레시피 테이블에 재료들 추가
+        rowList = []
+        val = lambda x: x.text() if x is not None else ''
+        for row in range(rowCnt):
+            col1 = val(self.table_new_recipe.item(row, 0))
+            col2 = val(self.table_new_recipe.item(row, 1))
 
-        # 기존에 없던 재료라면 재료 테이블에도 추가
+            if col1 != '' and col2 != '':
+                rowList.append([col1, col2])
+
+            # table_new_recipe에 비어있는 셀이 있다면
+            else:
+                QMessageBox.warning(self, '알림', '모든 셀의 내용을 입력해주세요')
+                return
+        print(f'이미 등록된 상품 아님, 비어있는 행 없음, 최소 1개의 레시피 : \n {rowList}')
+
+        # 숫자 정규식
+        isint = re.compile('[0-9]')
+        check = lambda x: x if isint.match(x) != None else None
+
+        # 재료 번호 조회
+        conn = pymysql.connect(host=self.HOST, port=self.PORT, user=self.USER, password=self.PASSWORD, db='smart', charset='utf8')
+        recipeList = []
+        with conn.cursor() as cur:
+            for row in rowList:
+                sql = f"SELECT ingre_num FROM ingredients WHERE ingre_name = '{str(row[0])}';"
+                cur.execute(sql)
+                ingre = cur.fetchone()
+                # 기존에 없던 재료 -- 추가 불가
+                if ingre == None:
+                    QMessageBox.warning(self, '알림', '존재하지 않는 재료입니다')
+                    return
+                # 분량이 숫자가 아닐 때 -- 추가 불가
+                elif check(row[1]) == None :
+                    QMessageBox.warning(self, '알림', '분량을 바르게 입력해주세요')
+                    return
+                else: # 모두 바르게 입력한 경우, 레시피 리스트에 추가
+                    recipeList.append([int(ingre[0]), int(row[1])]) # 재료번호, 재료분량
+
+        # 가격 확인
+        print(self.in_cost.text())
+        cost = self.in_cost.text()
+        print(f'가격확인 {cost}')
+        if check(cost) == None :
+            QMessageBox.warning(self, '알림', '가격을 바르게 입력해주세요')
+            return
+
+        # Q메시지 박스 - 상품명: {product}, 레시피 : {재료1}-{분량} / ... ... 추가하시겠습니까?
+        message = f'상품명: {product} \n가격: {cost}원. \n---------레시피'
+        for row in rowList:
+            message = message + f'\n {str(row[0])} - {str(row[1])}ml'
+        message = message + f'\n상품 목록에 추가하시겠습니까?'
+        reply = QMessageBox.question(self, '상품 추가', message,
+                                     QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+
+        # conn = pymysql.connect(host=self.HOST, port=self.PORT, user=self.USER, password=self.PASSWORD, db='smart', charset='utf8')
+        # with conn.cursor() as cur:
+        #     # 상품 테이블에 product 추가 --
+        #
+
+            # 상품 번호 가져옴 --
+
+            # 레시피 테이블에 상품번호 -- 재료번호 추가 --
 
 
 if __name__ == "__main__":
