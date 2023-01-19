@@ -207,6 +207,32 @@
        <string>자동주문종료</string>
       </property>
      </widget>
+     <widget class="QPushButton" name="btn_auto_order_receip_start">
+      <property name="geometry">
+       <rect>
+        <x>800</x>
+        <y>290</y>
+        <width>111</width>
+        <height>71</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>자동주문접수시작</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btn_auto_order_receipt_stop">
+      <property name="geometry">
+       <rect>
+        <x>970</x>
+        <y>290</y>
+        <width>111</width>
+        <height>71</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>자동주문접수종료</string>
+      </property>
+     </widget>
     </widget>
     <widget class="QWidget" name="p_join">
      <widget class="QPushButton" name="btn_check">

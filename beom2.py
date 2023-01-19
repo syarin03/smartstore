@@ -85,9 +85,12 @@ class Thread1(QThread):
 
                 print(1)
                 con.commit()
-                con.close()
+
                 self.parent.btn_auto_buy_stop.clicked.connect(self.stop)
-            time.sleep(5)
+                time.sleep(5)
+
+
+
 
 
 
@@ -96,6 +99,113 @@ class Thread1(QThread):
         self.power = False
         self.quit()
 
+
+class Thread2(QThread):
+    # 초기화 메서드 구현
+    def __init__(self, parent):  # parent는 WndowClass에서 전달하는 self이다.(WidnowClass의 인스턴스)
+        super().__init__(parent)
+        self.parent = parent  # self.parent를 사용하여 WindowClass 위젯을 제어할 수 있다.
+
+    def run(self):  ##자동주문접수 함수
+        self.power = True
+        while self.power == True:
+            HOST = '10.10.21.110'
+            PORT = 3306
+            USER = 'user_t'
+            PASSWORD = 'xlavmfhwprxm9'
+
+            con = pymysql.connect(host=HOST, port=PORT, user=USER, password=PASSWORD, db='smart', charset='utf8')
+            cur = con.cursor()  # db연결
+
+            cur.execute(f"SELECT * from smart.order \
+                                    left join smart.product \
+                                    ON smart.order.prod_num = smart.product.prod_num \
+                                        where order_status = '{'접수대기'}';" )  # 오더테이블 과 프로덕트테이블 조인하여 주문상태가 접수대기중인것만 조회
+            rows = cur.fetchall()
+
+            ## rows[0][3] = 제붐번호 rows[0][4] = 수량
+            ## rows2[0][3] ==소모량 rows[0][7]= 전체잔량
+
+            cur.execute(f"SELECT * \
+                                    from smart.recipe left join smart.ingredients \
+                                        ON smart.recipe.ingre_num = smart.ingredients.ingre_num \
+                                        where smart.recipe.prod_num = '{rows[0][3]}';")  # 상품번호로 레시피와 재료테이블을 조인하여 조회
+            rows2 = cur.fetchall()  # num
+
+
+
+
+
+            cur.execute(f"SELECT count(smart.recipe.prod_num) \
+                                from smart.recipe \
+                                left join smart.product \
+                                on smart.recipe.prod_num = smart.product.prod_num \
+                                where smart.recipe.prod_num = '{rows[0][3]}';")  # 제품의 제조에 필요한 재료가 몇개인지 조회하는 쿼리문
+            len = cur.fetchall()
+            # rows3 = cur.fetchall()
+            # print(rows[0])
+            for i in range (0,len[0][0]):
+
+                cur.execute(f"UPDATE smart.ingredients \
+                                            SET stock = stock -  '{rows2[i][3]}' \
+                                            WHERE smart.ingredients.ingre_num = '{rows2[i][2]}';")  ##주문접수 버튼을누르면 재료테이블의 스톡을 해당 주문의 구매수량 X 소모량 만큼 빼주는 쿼리문
+
+            cur.execute(f"UPDATE smart.order \
+                                                                   SET order_status = '{'접수,제작 완료'}' \
+                                                                   WHERE smart.order.num = '{rows[0][0]}';")  ##오더테이블의 num으로 조회하여 접수대기중을 접수,제작완료로 업데이트 해주는 쿼리문
+            con.commit()
+
+
+            self.parent.btn_auto_order_receipt_stop.clicked.connect(self.stop)
+            # self.parent.go_order_management()
+
+            cur.execute(f"SELECT * from smart.order \
+                                                left join smart.product \
+                                                ON smart.order.prod_num = smart.product.prod_num;")  # 오더테이블 과 프로덕트테이블 조인하여 조회
+            newrows = cur.fetchall()
+
+            cur.execute(f"SELECT count(num) from smart.order;")  # 주문 횟수가 얼마나 되는지 조회하는 쿼리문
+            len2 = cur.fetchall()
+            con.close()
+
+            self.parent.table_order_management.setRowCount(len2[0][0])
+            self.parent.table_order_management.setColumnCount(6)
+
+            print(newrows[0][2])
+            print(type(newrows[0][2]))
+
+            col = 0
+            for row in newrows:
+
+                self.parent.table_order_management.setItem(col, 0, QTableWidgetItem(str(row[1])))
+                self.parent.table_order_management.setItem(col, 1, QTableWidgetItem(str(row[2])))
+                self.parent.table_order_management.setItem(col, 2, QTableWidgetItem(str(row[7])))
+                self.parent.table_order_management.setItem(col, 3, QTableWidgetItem(str(row[4])))
+                self.parent.table_order_management.setItem(col, 4, QTableWidgetItem(str((row[8] * row[4]))))  ## 총금액
+                self.parent.table_order_management.setItem(col, 5, QTableWidgetItem(str(row[5])))
+
+                col += 1
+            time.sleep(5)
+            # print(12121212)
+            # print(rows2[0])
+            # print(rows2[1])
+            # print(len[0][0])
+
+    def stop(self):
+        # 멀티쓰레드를 종료하는 메소드
+        self.power = False
+        self.quit()
+
+
+
+# 쓰레드로 동작시킬 함수 내용 구현class Thread(QThread):
+#     #초기화 메서드 구현
+#     def __init__(self, parent): #parent는 WndowClass에서 전달하는 self이다.(WidnowClass의 인스턴스)
+#         super().__init__(parent)
+#         self.parent = parent #self.parent를 사용하여 WindowClass 위젯을 제어할 수 있다.
+#
+#     def run(self)
+#         #쓰레드로 동작시킬 함수 내용 구현
 
 # 메인 윈도우
 class WindowClass(QMainWindow, form_class):
@@ -133,15 +243,21 @@ class WindowClass(QMainWindow, form_class):
 
         self.btn_order_receipt.clicked.connect(self.order_receipt)
         self.btn_auto_buy_start.clicked.connect(self.actionFunction1)  #자동주문 스레드 시작
-        # self.btn_auto_buy_stop.clicked.connect(self.actionFunction2)
+        self.btn_auto_order_receip_start.clicked.connect(self.actionFunction3)  # 자동주문 스레드 시작
 
-    def actionFunction1(self):
+
+    def actionFunction1(self):   ##자동주문 쓰레드 시작
         h1 = Thread1(self)
         h1.start()
 
-    def actionFunction2(self):
-        h1 = Thread1(self)
-        h1.stop()
+
+
+    def actionFunction3(self):
+        h1 = Thread2(self)
+        h1.start()
+
+
+
 
 
     def login(self):
@@ -308,7 +424,7 @@ class WindowClass(QMainWindow, form_class):
             cur.execute(f"insert into smart.order (order_num, order_time, prod_num, quantity) \
                                                     values ('{self.order_num}', '{self.retrun_YMD}', '{int(self.order_info[0][0])}', '{int(ran3)}');")
 
-            print("병신")
+
             con.commit()
             con.close()
 
@@ -339,7 +455,7 @@ class WindowClass(QMainWindow, form_class):
         cur.execute(f"SELECT * from smart.order \
                         left join smart.product \
                         ON smart.order.prod_num = smart.product.prod_num;")  #오더테이블 과 프로덕트테이블 조인하여 조회
-        rows = cur.fetchall()
+        self.rows = cur.fetchall()
 
         cur.execute(f"SELECT count(num) from smart.order;") #주문 횟수가 얼마나 되는지 조회하는 쿼리문
         len = cur.fetchall()
@@ -348,11 +464,11 @@ class WindowClass(QMainWindow, form_class):
         self.table_order_management.setRowCount(len[0][0])
         self.table_order_management.setColumnCount(6)
 
-        print(rows[0][2])
-        print(type(rows[0][2]))
+        print(self.rows[0][2])
+        print(type(self.rows[0][2]))
         con.close()
         col=0
-        for row in rows:
+        for row in self.rows:
 
 
             self.table_order_management.setItem(col, 0, QTableWidgetItem(str(row[1])))
