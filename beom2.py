@@ -108,7 +108,12 @@ class Thread2(QThread):
 
     def run(self):  ##자동주문접수 함수
         self.power = True
+        j=0
         while self.power == True:
+            self.parent.btn_auto_order_receipt_stop.clicked.connect(self.stop)
+
+            print("시작해보자")
+            print(j)
             HOST = '10.10.21.110'
             PORT = 3306
             USER = 'user_t'
@@ -124,12 +129,12 @@ class Thread2(QThread):
             rows = cur.fetchall()
 
             ## rows[0][3] = 제붐번호 rows[0][4] = 수량
-            ## rows2[0][3] ==소모량 rows[0][7]= 전체잔량
+            ## rows2[0][3] ==소모량 rows2[0][7]= 전체잔량
 
             cur.execute(f"SELECT * \
                                     from smart.recipe left join smart.ingredients \
                                         ON smart.recipe.ingre_num = smart.ingredients.ingre_num \
-                                        where smart.recipe.prod_num = '{rows[0][3]}';")  # 상품번호로 레시피와 재료테이블을 조인하여 조회
+                                        where smart.recipe.prod_num = '{rows[j][3]}';")  # 상품번호로 레시피와 재료테이블을 조인하여 조회
             rows2 = cur.fetchall()  # num
 
 
@@ -140,19 +145,29 @@ class Thread2(QThread):
                                 from smart.recipe \
                                 left join smart.product \
                                 on smart.recipe.prod_num = smart.product.prod_num \
-                                where smart.recipe.prod_num = '{rows[0][3]}';")  # 제품의 제조에 필요한 재료가 몇개인지 조회하는 쿼리문
+                                where smart.recipe.prod_num = '{rows[j][3]}';")  # 제품의 제조에 필요한 재료가 몇개인지 조회하는 쿼리문
             len = cur.fetchall()
             # rows3 = cur.fetchall()
             # print(rows[0])
             for i in range (0,len[0][0]):
-
-                cur.execute(f"UPDATE smart.ingredients \
-                                            SET stock = stock -  '{rows2[i][3]}' \
-                                            WHERE smart.ingredients.ingre_num = '{rows2[i][2]}';")  ##주문접수 버튼을누르면 재료테이블의 스톡을 해당 주문의 구매수량 X 소모량 만큼 빼주는 쿼리문
+                if int(rows2[i][7]) < int(rows2[i][3]*rows[i][4]):
+                    print("부족해")
+                    breakgab = False
+                    break
+                else:
+                    breakgab = True
+                    cur.execute(f"UPDATE smart.ingredients \
+                                                SET stock = stock -  '{int(rows2[i][3]*rows[i][4])}' \
+                                                WHERE smart.ingredients.ingre_num = '{rows2[i][2]}';")  ##재료테이블의 스톡을 해당 주문의 구매수량 X 소모량 만큼 빼주는 쿼리문
+                #포문끝
+            if breakgab == False:
+                print("다시시작")
+                j+=1
+                continue
 
             cur.execute(f"UPDATE smart.order \
-                                                                   SET order_status = '{'접수,제작 완료'}' \
-                                                                   WHERE smart.order.num = '{rows[0][0]}';")  ##오더테이블의 num으로 조회하여 접수대기중을 접수,제작완료로 업데이트 해주는 쿼리문
+                        SET order_status = '{'접수,제작 완료'}' \
+                        WHERE smart.order.num = '{rows[j][0]}';")  ##오더테이블의 num으로 조회하여 접수대기중을 접수,제작완료로 업데이트 해주는 쿼리문
             con.commit()
 
 
@@ -185,6 +200,7 @@ class Thread2(QThread):
                 self.parent.table_order_management.setItem(col, 5, QTableWidgetItem(str(row[5])))
 
                 col += 1
+            j+=1
             time.sleep(5)
             # print(12121212)
             # print(rows2[0])
