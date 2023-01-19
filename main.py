@@ -150,7 +150,6 @@ class WindowClass(QMainWindow, form_class):
 
     def page_changed(self):
         self.table_qna.setRowCount(0)
-        self.edit_answer.clear()
         self.edit_question_content.clear()
         self.edit_question_order.clear()
         self.edit_question_title.clear()
@@ -158,9 +157,10 @@ class WindowClass(QMainWindow, form_class):
     def view_question(self):
         row = self.table_qna.currentIndex().row()
         col = self.table_qna.currentIndex().column()
+        print(row, col)
         data = self.table_qna.item(row, col)
         print(row, col, data.text())
-        sql = "SELECT * FROM question WHERE num = " + str(row + 1)
+        sql = f"SELECT * FROM question WHERE title = '{data.text()}'"
         print(sql)
         with self.conn_fetch() as cur:
             cur.execute(sql)
@@ -175,7 +175,7 @@ class WindowClass(QMainWindow, form_class):
                 self.label_answer_status.setText('완료')
                 self.edit_answer.setPlainText(str(result[0][5]))
             self.label_qna_num.setText(str(result[0][0]))
-            self.stackedWidget.setCurrentWidget(self.stack_qna_detail)
+        self.stackedWidget.setCurrentWidget(self.stack_qna_detail)
 
 
 if __name__ == "__main__":
