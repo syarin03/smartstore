@@ -4,12 +4,13 @@ import sys
 import time
 import pymysql
 from PyQt5 import uic
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QFontDatabase, QFont
-from PyQt5.QtWidgets import QMainWindow, QApplication, QTableWidgetItem, QAbstractItemView, QMessageBox, QHeaderView, \
+from PyQt5.QtCore import *
+from PyQt5.QtGui import QFontDatabase, QFont, QRegExpValidator
+from PyQt5.QtWidgets import QMainWindow, QApplication, QTableWidgetItem, QMessageBox, QHeaderView, \
     QPushButton
-from matplotlib import font_manager
 from datetime import datetime, timedelta
+
+from pyqt5_plugins.examplebuttonplugin import QtGui
 
 # path = os.getcwd()
 # font_path = path + "\Pretendard-Light.otf"
@@ -46,16 +47,16 @@ class WindowClass(QMainWindow, form_class):
 
         # 로그인 / 로그아웃
         self.btn_login.clicked.connect(self.login)
-        # self.btn_logout.clicked.connect(self.logout) 로그아웃 아직 없음
         self.btn_join.clicked.connect(self.into_join)
         self.btn_check.clicked.connect(self.idcheck)
         self.btn_newuser.clicked.connect(self.signup)
         self.btn_gomain.clicked.connect(self.gohome)
 
         # 상품추가
-        # self.btn_addProduct.clicked.connect(상품추가)
         self.btn_add.clicked.connect(self.new_recipe_plus)
         self.btn_del.clicked.connect(self.new_recipe_minus)
+        input_rule = QRegExp("[0-9]{0,6}")  # 0부터 9까지의 숫자 길이 제한 없음
+        self.in_cost.setValidator(QRegExpValidator(input_rule, self))
 
     def login(self):
         print('로그인 함수')
@@ -66,7 +67,7 @@ class WindowClass(QMainWindow, form_class):
 
         cur.execute(f"select smart.member.num \
                                from smart.member \
-                               where uid = '{id}' and upw = '{pw}';")  # 입력한id와 pw가 같은게있는지 db에서 검색
+                               where uid = '{id}' and upw = '{pw}';")  # 입력한 id와 pw가 같은게있는지 db에서 검색
         rows = cur.fetchall()
 
         if id == '' or pw == '':
@@ -243,7 +244,7 @@ class WindowClass(QMainWindow, form_class):
     def add_product(self):
         if self.in_new_item is not None :
             product = self.in_new_item.text()
-            # 상품이 이미 등록되어있는지 확인
+            # 상품이 이미 등록 되어 있는지 확인
             if product in self.product:
                 QMessageBox.warning(self, '알림', '이미 등록된 상품입니다.')
                 return
@@ -297,10 +298,6 @@ class WindowClass(QMainWindow, form_class):
         # 가격 확인
         print(self.in_cost.text())
         cost = self.in_cost.text()
-        print(f'가격확인 {cost}')
-        if check(cost) == None :
-            QMessageBox.warning(self, '알림', '가격을 바르게 입력해주세요')
-            return
 
         # Q메시지 박스 - 상품명: {product}, 레시피 : {재료1}-{분량} / ... ... 추가하시겠습니까?
         message = f'상품명: {product} \n가격: {cost}원. \n---------레시피'
@@ -309,14 +306,44 @@ class WindowClass(QMainWindow, form_class):
         message = message + f'\n상품 목록에 추가하시겠습니까?'
         reply = QMessageBox.question(self, '상품 추가', message,
                                      QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+        # NO를 선택하면 종료
+        if reply == QMessageBox.No:
+            print('NO를 선택')
+            return
 
-        # conn = pymysql.connect(host=self.HOST, port=self.PORT, user=self.USER, password=self.PASSWORD, db='smart', charset='utf8')
-        # with conn.cursor() as cur:
-        #     # 상품 테이블에 product 추가 --
-       #
+        conn = pymysql.connect(host=self.HOST, port=self.PORT, user=self.USER, password=self.PASSWORD, db='smart', charset='utf8')
+        with conn.cursor() as cur:
+            # 상품 테이블에 product 추가 --
+            sql = f'INSERT INTO product (prod_name, cost, pro_status)' \
+                  f'VALUES(%s, %s, %s);'
+            val = [product, cost, 'FALSE']
+            cur.execute(sql, val)
+            conn.commit()
+            print(f'@{product} 추가 완료')
 
             # 상품 번호 가져옴 --
-            # 레시피 테이블에 상품번호 -- 재료번호 추가 --
+            sql = f"SELECT prod_num FROM product WHERE prod_name = '{product}'"
+            cur.execute(sql)
+            prod_num = int(cur.fetchone()[0])
+            print(f'@상품번호 {prod_num}')
+
+            # 레시피 리스트 제일 앞에 prod_num 추가
+            for data in recipeList:
+                data.insert(0, prod_num)
+                print(f'재료 : {data}')
+            print(f'레시피 : {recipeList}')
+
+            # 레시피 테이블에 상품번호 -- 재료번호 -- 분량 추가
+            sql = f"INSERT INTO recipe (prod_num, ingre_num, consum)" \
+                  f"VALUES(%s, %s, %s)"
+            val = recipeList
+            cur.executemany(sql, val)
+            conn.commit()
+        QMessageBox.information(self, '상품 추가', '추가되었습니다.')
+
+        # 상품 목록 새로 읽기
+        self.product_listup()
+
 
 
 if __name__ == "__main__":
