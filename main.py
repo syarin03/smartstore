@@ -158,7 +158,7 @@ class WindowClass(QMainWindow, form_class):
         row = self.table_qna.currentIndex().row()
         col = self.table_qna.currentIndex().column()
         print(row, col)
-        data = self.table_qna.item(row, col)
+        data = self.table_qna.item(row, 3)
         print(row, col, data.text())
         sql = f"SELECT * FROM question WHERE title = '{data.text()}'"
         print(sql)
