@@ -4,20 +4,13 @@ import sys
 import time
 import pymysql
 from PyQt5 import uic
-from PyQt5.QtCore import *
-from PyQt5.QtGui import QFontDatabase, QFont, QRegExpValidator
-from PyQt5.QtWidgets import QMainWindow, QApplication, QTableWidgetItem, QMessageBox, QHeaderView, \
-    QPushButton
-from datetime import datetime, timedelta
+from PyQt5.QtGui import QRegExpValidator
+from PyQt5.QtWidgets import QMainWindow, QApplication, QTableWidgetItem, QMessageBox, QHeaderView
+from datetime import datetime
 import random
 from PyQt5.QtCore import *
 
-# path = os.getcwd()
-# font_path = path + "\Pretendard-Light.otf"
-# font = font_manager.FontProperties(fname=font_path).get_name()
-
 form_class = uic.loadUiType("mainUI.ui")[0]
-
 
 # QThread 클래스 선언하기, QThread 클래스를 쓰려면 QtCore 모듈을 import 해야함.
 
@@ -106,8 +99,6 @@ class Thread2(QThread):
         while self.power == True:
             self.parent.btn_auto_order_receipt_stop.clicked.connect(self.stop)
 
-            print("시작해보자")
-            print(j)
             HOST = '10.10.21.110'
             PORT = 3306
             USER = 'user_t'
@@ -122,7 +113,7 @@ class Thread2(QThread):
                                         where order_status = '{'접수대기'}';" )  # 오더테이블 과 프로덕트테이블 조인하여 주문상태가 접수대기중인것만 조회
             rows = cur.fetchall()
 
-            ## rows[0][3] = 제붐번호 rows[0][4] = 수량
+            ## rows[0][3] = 제품번호 rows[0][4] = 수량
             ## rows2[0][3] ==소모량 rows2[0][7]= 전체잔량
 
             cur.execute(f"SELECT * \
@@ -130,10 +121,6 @@ class Thread2(QThread):
                                         ON smart.recipe.ingre_num = smart.ingredients.ingre_num \
                                         where smart.recipe.prod_num = '{rows[j][3]}';")  # 상품번호로 레시피와 재료테이블을 조인하여 조회
             rows2 = cur.fetchall()  # num
-
-
-
-
 
             cur.execute(f"SELECT count(smart.recipe.prod_num) \
                                 from smart.recipe \
@@ -163,7 +150,6 @@ class Thread2(QThread):
                         SET order_status = '{'접수,제작 완료'}' \
                         WHERE smart.order.num = '{rows[j][0]}';")  ##오더테이블의 num으로 조회하여 접수대기중을 접수,제작완료로 업데이트 해주는 쿼리문
             con.commit()
-
 
             self.parent.btn_auto_order_receipt_stop.clicked.connect(self.stop)
             # self.parent.go_order_management()
@@ -196,17 +182,12 @@ class Thread2(QThread):
                 col += 1
             j+=1
             time.sleep(5)
-            # print(12121212)
-            # print(rows2[0])
-            # print(rows2[1])
-            # print(len[0][0])
 
 
     def stop(self):
         # 멀티쓰레드를 종료하는 메소드
         self.power = False
         self.quit()
-
 
 # 메인 윈도우
 class WindowClass(QMainWindow, form_class):
@@ -231,39 +212,37 @@ class WindowClass(QMainWindow, form_class):
 
         # 초기 화면 설정
         self.main_menu.hide() # 메인 메뉴 숨김
+
         self.Page.setCurrentWidget(self.p_intro)
-        self.page_login.setCurrentWidget(self.pl_01)
         self.main_menu.setCurrentIndex(0)
         self.product_listup()
 
-        # 가미버튼
+        # 문의 관리
         self.main_menu.currentChanged.connect(self.page_changed)
         self.page_qna.currentChanged.connect(self.page_changed)
         self.table_qna.itemDoubleClicked.connect(self.view_question)
-        # self.btn_go_qna_manage.clicked.connect(self.go_qna)
-        # self.btn_answer_to_qna.clicked.connect(self.go_qna)
         self.btn_go_qna_add.clicked.connect(self.go_question)
-        # self.btn_qna_to_main.clicked.connect(self.go_main)
-        # self.btn_question_to_main.clicked.connect(self.go_main)
         self.btn_question.clicked.connect(self.question)
         self.btn_answer.clicked.connect(self.answer)
 
+        # 주문 관리
+        self.btn_order_list_waitng_view.clicked.connect(self.view_orderlist_wating)
+        self.btn_order_list_view.clicked.connect(self.view_orderlist)
+        self.btn_buy_random.clicked.connect(self.buy_random)
+        # 주문 관리 테이블위젯의 행,열을 받는 함수
+        self.table_order_management.cellClicked.connect(self.current_table_row_column)
 
         # 로그인 / 로그아웃
+        self.page_login.setCurrentWidget(self.pl_01)
         self.btn_login.clicked.connect(self.login)
         self.btn_logout.clicked.connect(self.logout)
-
+        # 회원가입
         self.btn_join.clicked.connect(self.into_join)
         self.btn_check.clicked.connect(self.idcheck)
         self.btn_newuser.clicked.connect(self.signup)
         self.btn_gomain.clicked.connect(self.gohome)
 
-        #
-        self.btn_buy_random.clicked.connect(self.buy_random)
-        self.btn_order_management.clicked.connect(self.go_order_management)
 
-        # 주문 관리 테이블위젯의 행,열을 받는 함수
-        self.table_order_management.cellClicked.connect(self.current_table_row_column)
         # 테이블 헤더 폭 조정 :
         self.table_order_management.setColumnWidth(0, 60)
         self.table_order_management.setColumnWidth(1, 130)
@@ -280,6 +259,21 @@ class WindowClass(QMainWindow, form_class):
         self.btn_del.clicked.connect(self.new_recipe_minus)
         input_rule = QRegExp("[0-9]{0,6}")  # 0부터 9까지의 숫자 길이 제한 없음
         self.in_cost.setValidator(QRegExpValidator(input_rule, self))
+
+
+    def product_cell(self, row):
+        item = self.table_product.item(row, 0)
+        item = item.text()
+        print(f'@{item} 판매하기')
+
+        conn = pymysql.connect(host=self.HOST, port=self.PORT, user=self.USER, password=self.PASSWORD, db='smart',
+                               charset='utf8')
+        with conn.cursor() as cur:
+            # 상품번호 가져오기
+            sql = f"SELECT prod_num FROM product WHERE prod_name ='{item}';"
+            cur.execute(sql)
+            prod_num = cur.fetchall()[0]
+        print(prod_num)
 
 
     def go_qna(self):
@@ -315,6 +309,63 @@ class WindowClass(QMainWindow, form_class):
                 else:
                     self.table_qna.setItem(col, 4, QTableWidgetItem('완료'))
                 col += 1
+
+    def view_orderlist(self):   ##새로고침 함수
+        con = pymysql.connect(host=self.HOST, port=self.PORT, user=self.USER, password=self.PASSWORD, db='smart', charset='utf8')
+        cur = con.cursor()  # db연결
+        cur.execute(f"SELECT * from smart.order \
+                                left join smart.product \
+                                ON smart.order.prod_num = smart.product.prod_num")  # 오더테이블 과 프로덕트테이블 조인하여 조회
+        rows = cur.fetchall()
+
+        cur.execute(f"SELECT count(num) from smart.order;")  # 주문 횟수가 얼마나 되는지 조회하는 쿼리문
+        len = cur.fetchall()
+
+        self.table_order_management.setRowCount(len[0][0])
+        self.table_order_management.setColumnCount(6)
+
+
+
+        con.close()
+        col = 0
+        for row in rows:
+
+            self.table_order_management.setItem(col, 0, QTableWidgetItem(str(row[1])))
+            self.table_order_management.setItem(col, 1, QTableWidgetItem(str(row[2])))
+            self.table_order_management.setItem(col, 2, QTableWidgetItem(str(row[7])))
+            self.table_order_management.setItem(col, 3, QTableWidgetItem(str(row[4])))
+            self.table_order_management.setItem(col, 4, QTableWidgetItem(str((row[8] * row[4]))))  ## 총금액
+            self.table_order_management.setItem(col, 5, QTableWidgetItem(str(row[5])))
+
+            col += 1
+
+    def view_orderlist_wating(self):  ##접수대기중인건만 조회하는 함수
+        con = pymysql.connect(host=self.HOST, port=self.PORT, user=self.USER, password=self.PASSWORD, db='smart',
+                              charset='utf8')
+        cur = con.cursor()  # db연결
+        cur.execute(f"SELECT * from smart.order \
+                                left join smart.product \
+                                ON smart.order.prod_num = smart.product.prod_num \
+                                where smart.order.order_status = '접수대기'")  # 오더테이블 과 프로덕트테이블 조인하여 조회
+        rows = cur.fetchall()
+
+        cur.execute(f"SELECT count(num) from smart.order where smart.order.order_status = '접수대기';")  # 주문 횟수가 얼마나 되는지 조회하는 쿼리문
+        len = cur.fetchall()
+
+        self.table_order_management.setRowCount(len[0][0])
+        self.table_order_management.setColumnCount(6)
+
+        con.close()
+        col = 0
+        for row in rows:
+
+            self.table_order_management.setItem(col, 0, QTableWidgetItem(str(row[1])))
+            self.table_order_management.setItem(col, 1, QTableWidgetItem(str(row[2])))
+            self.table_order_management.setItem(col, 2, QTableWidgetItem(str(row[7])))
+            self.table_order_management.setItem(col, 3, QTableWidgetItem(str(row[4])))
+            self.table_order_management.setItem(col, 4, QTableWidgetItem(str((row[8] * row[4]))))  ## 총금액
+            self.table_order_management.setItem(col, 5, QTableWidgetItem(str(row[5])))
+            col+=1
 
     def go_question(self):
         self.page_qna.setCurrentWidget(self.stack_add_question)
@@ -383,7 +434,6 @@ class WindowClass(QMainWindow, form_class):
         self.edit_question_content.clear()
         self.edit_question_order.clear()
         self.edit_question_title.clear()
-        # self.page_qna.setCurrentWidget(self.stack_qna)
         self.go_qna()
 
     def view_question(self):
@@ -456,6 +506,7 @@ class WindowClass(QMainWindow, form_class):
             self.page_login.setCurrentWidget(self.pl_02)
             self.label_welcome.setText(f'{self.member_info[0][3]}님 환영합니다.')
             self.main_menu.show()
+            self.view_orderlist()
 
     def logout(self):
         print('로그아웃 함수')
@@ -565,41 +616,41 @@ class WindowClass(QMainWindow, form_class):
             conn.commit()
             conn.close()
 
-    def go_order_management(self):  ##주문관리 함수
-        print("주문관리")
-
-        ## 주문목록 테이블위젯
-        conn = pymysql.connect(host=self.HOST, port=self.PORT, user=self.USER, password=self.PASSWORD, db='smart',
-                               charset='utf8')
-        cur = conn.cursor()  # db연결
-        cur.execute(f"SELECT * from smart.order \
-                        left join smart.product \
-                        ON smart.order.prod_num = smart.product.prod_num;")  # 오더테이블 과 프로덕트테이블 조인하여 조회
-        self.rows = cur.fetchall()
-
-        cur.execute(f"SELECT count(num) from smart.order;")  # 주문 횟수가 얼마나 되는지 조회하는 쿼리문
-        len = cur.fetchall()
-
-        self.table_order_management.setRowCount(len[0][0])
-        self.table_order_management.setColumnCount(6)
-
-        print(self.rows[0][2])
-        print(type(self.rows[0][2]))
-        conn.close()
-        col = 0
-        for row in self.rows:
-            self.table_order_management.setItem(col, 0, QTableWidgetItem(str(row[1])))
-            self.table_order_management.setItem(col, 1, QTableWidgetItem(str(row[2])))
-            self.table_order_management.setItem(col, 2, QTableWidgetItem(str(row[7])))
-            self.table_order_management.setItem(col, 3, QTableWidgetItem(str(row[4])))
-            self.table_order_management.setItem(col, 4, QTableWidgetItem(str((row[8] * row[4]))))  ## 총금액
-            self.table_order_management.setItem(col, 5, QTableWidgetItem(str(row[5])))
-
-            # 테이블 데이터 정렬 -- 오류
-            # self.table_order_management(col, 3).setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
-            # self.table_order_management(col, 4).setTextAlignment(Qt.AlignRight | Qt.AlignVCenter)
-            # self.table_order_management(col, 5).setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
-            col += 1
+    # def go_order_management(self):  ##주문관리 함수
+    #     print("주문관리")
+    #
+    #     ## 주문목록 테이블위젯
+    #     conn = pymysql.connect(host=self.HOST, port=self.PORT, user=self.USER, password=self.PASSWORD, db='smart',
+    #                            charset='utf8')
+    #     cur = conn.cursor()  # db연결
+    #     cur.execute(f"SELECT * from smart.order \
+    #                     left join smart.product \
+    #                     ON smart.order.prod_num = smart.product.prod_num;")  # 오더테이블 과 프로덕트테이블 조인하여 조회
+    #     self.rows = cur.fetchall()
+    #
+    #     cur.execute(f"SELECT count(num) from smart.order;")  # 주문 횟수가 얼마나 되는지 조회하는 쿼리문
+    #     len = cur.fetchall()
+    #
+    #     self.table_order_management.setRowCount(len[0][0])
+    #     self.table_order_management.setColumnCount(6)
+    #
+    #     print(self.rows[0][2])
+    #     print(type(self.rows[0][2]))
+    #     conn.close()
+    #     col = 0
+    #     for row in self.rows:
+    #         self.table_order_management.setItem(col, 0, QTableWidgetItem(str(row[1])))
+    #         self.table_order_management.setItem(col, 1, QTableWidgetItem(str(row[2])))
+    #         self.table_order_management.setItem(col, 2, QTableWidgetItem(str(row[7])))
+    #         self.table_order_management.setItem(col, 3, QTableWidgetItem(str(row[4])))
+    #         self.table_order_management.setItem(col, 4, QTableWidgetItem(str((row[8] * row[4]))))  ## 총금액
+    #         self.table_order_management.setItem(col, 5, QTableWidgetItem(str(row[5])))
+    #
+    #         # 테이블 데이터 정렬 -- 오류
+    #         # self.table_order_management(col, 3).setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
+    #         # self.table_order_management(col, 4).setTextAlignment(Qt.AlignRight | Qt.AlignVCenter)
+    #         # self.table_order_management(col, 5).setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
+    #         col += 1
 
     def current_table_row_column(self):  # 주문관리 테이블위젯의 행,열을 받고 자재관리 테이블위젯을 만들어주는 함수
 
@@ -623,7 +674,6 @@ class WindowClass(QMainWindow, form_class):
                             where smart.recipe.prod_num = '{prod_num[0][0]}';")  # 상품번호로 레시피와 재료테이블을 조인하여 조회
         self.rows2 = cur.fetchall()  # num
         self.possible_make = []
-        # print(self.possible_make[0])
 
         cur.execute(f"SELECT count(smart.recipe.prod_num) \
                     from smart.recipe \
@@ -676,7 +726,6 @@ class WindowClass(QMainWindow, form_class):
 
             conn.commit()
 
-            print(2222)
             cur.execute(f"SELECT * from smart.order \
                                            left join smart.product \
                                            ON smart.order.prod_num = smart.product.prod_num;")  # 오더테이블 과 프로덕트테이블 조인하여 조회
@@ -714,9 +763,8 @@ class WindowClass(QMainWindow, form_class):
             cur.execute(sql)
             products = cur.fetchall()
 
+
         self.table_product.setRowCount(len(products))
-        # btn = lambda x : '판매 중지' if x == True else '판매 등록'
-        status = lambda x: '판매중' if x == True else '대기중'
 
         col = 0
         self.product = []  # 초기화
@@ -725,11 +773,11 @@ class WindowClass(QMainWindow, form_class):
             # self.product에 상품명을 추가
             self.product.append(row[1])
             self.table_product.setItem(col, 1, QTableWidgetItem(str(row[2])))
-            self.table_product.setItem(col, 2, QTableWidgetItem(status(row[3])))
+            # self.table_product.setItem(col, 2, QTableWidgetItem(row[3]))
 
             self.table_product.item(col, 0).setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
             self.table_product.item(col, 1).setTextAlignment(Qt.AlignRight | Qt.AlignVCenter)
-            self.table_product.item(col, 2).setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
+            # self.table_product.item(col, 2).setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
             col += 1
 
         # 테이블 헤더 폭 조정 : 합쳐서 300
@@ -739,10 +787,11 @@ class WindowClass(QMainWindow, form_class):
         self.table_product.setColumnWidth(2, 80)
 
         # 테이블 이벤트
-        self.table_product.cellClicked.connect(self.product_matter)
+        self.table_product.cellClicked.connect(self.product_info)
         self.btn_addProduct.clicked.connect(self.add_product)
 
-    def product_matter(self, row):
+
+    def product_info(self, row):
         item = self.table_product.item(row, 0)
         item = item.text()
         conn = pymysql.connect(host=self.HOST, port=self.PORT, user=self.USER, password=self.PASSWORD, db='smart',
@@ -755,8 +804,16 @@ class WindowClass(QMainWindow, form_class):
             cur.execute(sql)
             ingre = cur.fetchall()
 
+            # 대기중인 접수 건수
+            sql = f"SELECT SUM(prod_num) FROM smart.order WHERE prod_num = (SELECT prod_num FROM product WHERE prod_name = '{item}') " \
+                  f"and order_status = '접수대기';"
+            cur.execute(sql)
+            order = cur.fetchone()[0]
+            print(order)
+
         self.table_ingredient.setRowCount(len(ingre))
 
+        amount = int(ingre[0][2]) // int(ingre[0][1])
         col = 0
         for row in ingre:
             self.table_ingredient.setItem(col, 0, QTableWidgetItem(row[0]))
@@ -767,8 +824,20 @@ class WindowClass(QMainWindow, form_class):
             self.table_ingredient.item(col, 1).setTextAlignment(Qt.AlignRight | Qt.AlignVCenter)
             self.table_ingredient.item(col, 2).setTextAlignment(Qt.AlignRight | Qt.AlignVCenter)
 
+            temp = int(row[2]) // int(row[1])
+            print(temp)
+
+            # 재고가 부족할 때
+            if int(row[1]) > int(row[2]):
+                amount = 0
+            elif temp < amount:
+                amount = temp
+
             col += 1
         self.table_ingredient.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self.label_prod_cnt.setText(f'제작 가능 수량 : {amount} 개')
+        check = lambda x: x if x != None else 0
+        self.label_prod_order.setText(f'주문 수량 : {check(order)} 건')
 
     def new_recipe_plus(self):
         row = self.table_new_recipe.rowCount() + 1

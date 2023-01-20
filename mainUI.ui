@@ -71,7 +71,11 @@
           </widget>
          </item>
          <item>
-          <widget class="QLineEdit" name="in_pw_login"/>
+          <widget class="QLineEdit" name="in_pw_login">
+           <property name="echoMode">
+            <enum>QLineEdit::Password</enum>
+           </property>
+          </widget>
          </item>
         </layout>
        </widget>
@@ -169,11 +173,11 @@
         <x>10</x>
         <y>80</y>
         <width>1001</width>
-        <height>621</height>
+        <height>661</height>
        </rect>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="page_2">
        <property name="geometry">
@@ -181,7 +185,7 @@
          <x>0</x>
          <y>0</y>
          <width>1001</width>
-         <height>543</height>
+         <height>583</height>
         </rect>
        </property>
        <attribute name="label">
@@ -231,9 +235,6 @@
         </column>
        </widget>
        <widget class="QTableWidget" name="table_order_management2">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
         <property name="geometry">
          <rect>
           <x>600</x>
@@ -241,6 +242,9 @@
           <width>401</width>
           <height>301</height>
          </rect>
+        </property>
+        <property name="editTriggers">
+         <set>QAbstractItemView::NoEditTriggers</set>
         </property>
         <column>
          <property name="text">
@@ -263,31 +267,44 @@
          </property>
         </column>
        </widget>
-       <widget class="QWidget" name="layoutWidget">
+       <widget class="QPushButton" name="btn_order_list_view">
+        <property name="geometry">
+         <rect>
+          <x>120</x>
+          <y>30</y>
+          <width>75</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>목록 갱신</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="btn_order_list_waitng_view">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>30</y>
+          <width>101</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>접수대기 조회</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="btn_order_receipt">
         <property name="geometry">
          <rect>
           <x>440</x>
-          <y>450</y>
-          <width>102</width>
-          <height>54</height>
+          <y>420</y>
+          <width>100</width>
+          <height>23</height>
          </rect>
         </property>
-        <layout class="QVBoxLayout" name="verticalLayout_4">
-         <item>
-          <widget class="QPushButton" name="btn_order_management">
-           <property name="text">
-            <string>목록 갱신</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="btn_order_receipt">
-           <property name="text">
-            <string>주문접수 및 제작</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
+        <property name="text">
+         <string>주문접수 및 제작</string>
+        </property>
        </widget>
       </widget>
       <widget class="QWidget" name="page_3">
@@ -296,7 +313,7 @@
          <x>0</x>
          <y>0</y>
          <width>1001</width>
-         <height>543</height>
+         <height>583</height>
         </rect>
        </property>
        <attribute name="label">
@@ -481,14 +498,14 @@
          </rect>
         </property>
         <property name="title">
-         <string>상품관리</string>
+         <string>상품조회</string>
         </property>
         <widget class="QTableWidget" name="table_product">
          <property name="geometry">
           <rect>
-           <x>10</x>
+           <x>70</x>
            <y>20</y>
-           <width>351</width>
+           <width>221</width>
            <height>371</height>
           </rect>
          </property>
@@ -511,16 +528,11 @@
            <string>가격</string>
           </property>
          </column>
-         <column>
-          <property name="text">
-           <string>상태</string>
-          </property>
-         </column>
         </widget>
         <widget class="QTableWidget" name="table_ingredient">
          <property name="geometry">
           <rect>
-           <x>10</x>
+           <x>70</x>
            <y>410</y>
            <width>351</width>
            <height>131</height>
@@ -551,6 +563,32 @@
           </property>
          </column>
         </widget>
+        <widget class="QWidget" name="">
+         <property name="geometry">
+          <rect>
+           <x>310</x>
+           <y>130</y>
+           <width>181</width>
+           <height>111</height>
+          </rect>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_4">
+          <item>
+           <widget class="QLabel" name="label_prod_order">
+            <property name="text">
+             <string>주문 수량 : </string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_prod_cnt">
+            <property name="text">
+             <string>제작 가능 수량 :</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
        </widget>
       </widget>
       <widget class="QWidget" name="page">
@@ -559,7 +597,7 @@
          <x>0</x>
          <y>0</y>
          <width>1001</width>
-         <height>543</height>
+         <height>583</height>
         </rect>
        </property>
        <attribute name="label">
@@ -580,7 +618,7 @@
          </font>
         </property>
         <property name="currentIndex">
-         <number>1</number>
+         <number>2</number>
         </property>
         <widget class="QWidget" name="stack_main">
          <widget class="QPushButton" name="btn_go_qna_manage">
