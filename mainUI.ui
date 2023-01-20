@@ -173,7 +173,7 @@
        </rect>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="page_2">
        <property name="geometry">
@@ -554,10 +554,18 @@
        </widget>
       </widget>
       <widget class="QWidget" name="page">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>1001</width>
+         <height>543</height>
+        </rect>
+       </property>
        <attribute name="label">
         <string>문의 관리</string>
        </attribute>
-       <widget class="QStackedWidget" name="stackedWidget">
+       <widget class="QStackedWidget" name="page_qna">
         <property name="geometry">
          <rect>
           <x>80</x>

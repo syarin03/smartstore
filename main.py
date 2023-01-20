@@ -238,7 +238,7 @@ class WindowClass(QMainWindow, form_class):
 
         # 가미버튼
         self.main_menu.currentChanged.connect(self.page_changed)
-        self.stackedWidget.currentChanged.connect(self.page_changed)
+        self.page_qna.currentChanged.connect(self.page_changed)
         self.table_qna.itemDoubleClicked.connect(self.view_question)
         # self.btn_go_qna_manage.clicked.connect(self.go_qna)
         # self.btn_answer_to_qna.clicked.connect(self.go_qna)
@@ -317,7 +317,7 @@ class WindowClass(QMainWindow, form_class):
                 col += 1
 
     def go_question(self):
-        self.stackedWidget.setCurrentWidget(self.stack_add_question)
+        self.page_qna.setCurrentWidget(self.stack_add_question)
         sql = "SELECT prod_num, prod_name FROM product"
         with self.conn_fetch() as cur:
             cur.execute(sql)
@@ -338,7 +338,7 @@ class WindowClass(QMainWindow, form_class):
                 cur.execute(sql)
                 con.commit()
                 QMessageBox.information(self, '알림', '답변이 저장되었습니다')
-                self.stackedWidget.setCurrentWidget(self.stack_qna)
+                self.page_qna.setCurrentWidget(self.stack_qna)
                 self.go_qna()
 
     def question(self):
@@ -373,13 +373,18 @@ class WindowClass(QMainWindow, form_class):
                 cur.execute(sql)
                 con.commit()
                 QMessageBox.information(self, '알림', '문의가 등록되었습니다')
-                self.stackedWidget.setCurrentWidget(self.stack_main)
+                self.page_qna.setCurrentWidget(self.stack_main)
 
     def page_changed(self):
+        send = self.sender()
+        if send == self.main_menu:
+            self.page_qna.setCurrentWidget(self.stack_qna)
         self.table_qna.setRowCount(0)
         self.edit_question_content.clear()
         self.edit_question_order.clear()
         self.edit_question_title.clear()
+        # self.page_qna.setCurrentWidget(self.stack_qna)
+        self.go_qna()
 
     def view_question(self):
         row = self.table_qna.currentIndex().row()
@@ -402,7 +407,7 @@ class WindowClass(QMainWindow, form_class):
                 self.label_answer_status.setText('완료')
                 self.edit_answer.setPlainText(str(result[0][5]))
             self.label_qna_num.setText(str(result[0][0]))
-        self.stackedWidget.setCurrentWidget(self.stack_qna_detail)
+        self.page_qna.setCurrentWidget(self.stack_qna_detail)
 
 
     def conn_fetch(self):
