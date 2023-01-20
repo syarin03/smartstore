@@ -177,7 +177,7 @@
        </rect>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="page_2">
        <property name="geometry">
@@ -606,7 +606,7 @@
        <widget class="QStackedWidget" name="page_qna">
         <property name="geometry">
          <rect>
-          <x>80</x>
+          <x>100</x>
           <y>10</y>
           <width>801</width>
           <height>511</height>
@@ -620,34 +620,6 @@
         <property name="currentIndex">
          <number>2</number>
         </property>
-        <widget class="QWidget" name="stack_main">
-         <widget class="QPushButton" name="btn_go_qna_manage">
-          <property name="geometry">
-           <rect>
-            <x>270</x>
-            <y>270</y>
-            <width>80</width>
-            <height>30</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string>문의 관리</string>
-          </property>
-         </widget>
-         <widget class="QPushButton" name="btn_go_qna_add">
-          <property name="geometry">
-           <rect>
-            <x>380</x>
-            <y>270</y>
-            <width>80</width>
-            <height>30</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string>문의 등록</string>
-          </property>
-         </widget>
-        </widget>
         <widget class="QWidget" name="stack_qna">
          <widget class="QTableWidget" name="table_qna">
           <property name="geometry">
@@ -900,25 +872,6 @@
          </widget>
         </widget>
         <widget class="QWidget" name="stack_add_question">
-         <widget class="QPushButton" name="btn_question_to_main">
-          <property name="geometry">
-           <rect>
-            <x>10</x>
-            <y>10</y>
-            <width>80</width>
-            <height>30</height>
-           </rect>
-          </property>
-          <property name="font">
-           <font>
-            <family>맑은 고딕</family>
-            <pointsize>10</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>뒤로가기</string>
-          </property>
-         </widget>
          <widget class="QLineEdit" name="edit_question_title">
           <property name="geometry">
            <rect>
@@ -1076,6 +1029,32 @@
           </property>
          </widget>
         </widget>
+       </widget>
+       <widget class="QPushButton" name="btn_go_qna_manage">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>80</width>
+          <height>30</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>문의 관리</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="btn_go_qna_add">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>40</y>
+          <width>80</width>
+          <height>30</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>문의 등록</string>
+        </property>
        </widget>
       </widget>
      </widget>

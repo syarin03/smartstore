@@ -219,9 +219,12 @@ class WindowClass(QMainWindow, form_class):
 
         # 문의 관리
         self.main_menu.currentChanged.connect(self.page_changed)
+        self.btn_go_qna_manage.clicked.connect(self.set_qna_page)
+        # self.stack_add_question.clicked.connect(self.set_qna_add)
+
         self.page_qna.currentChanged.connect(self.page_changed)
         self.table_qna.itemDoubleClicked.connect(self.view_question)
-        self.btn_go_qna_add.clicked.connect(self.go_question)
+        self.btn_go_qna_add.clicked.connect(self.go_question)# 이거수정중
         self.btn_question.clicked.connect(self.question)
         self.btn_answer.clicked.connect(self.answer)
 
@@ -261,6 +264,8 @@ class WindowClass(QMainWindow, form_class):
         self.in_cost.setValidator(QRegExpValidator(input_rule, self))
 
 
+
+
     def product_cell(self, row):
         item = self.table_product.item(row, 0)
         item = item.text()
@@ -275,6 +280,12 @@ class WindowClass(QMainWindow, form_class):
             prod_num = cur.fetchall()[0]
         print(prod_num)
 
+
+    def set_qna_page(self):
+        self.page_qna.setCurrentIndex(0)
+
+    def set_qna_add(self):
+        self.page_qna.setCurrentIndex(2)
 
     def go_qna(self):
         sql = "SELECT a.num, b.prod_name, c.order_num, a.title, a.content, a.answer " \
@@ -424,7 +435,7 @@ class WindowClass(QMainWindow, form_class):
                 cur.execute(sql)
                 con.commit()
                 QMessageBox.information(self, '알림', '문의가 등록되었습니다')
-                self.page_qna.setCurrentWidget(self.stack_main)
+                self.page_qna.setCurrentWidget(self.stack_qna)
 
     def page_changed(self):
         send = self.sender()
