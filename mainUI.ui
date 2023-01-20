@@ -43,7 +43,7 @@
        <number>0</number>
       </property>
       <widget class="QWidget" name="pl_01">
-       <widget class="QWidget" name="">
+       <widget class="QWidget" name="layoutWidget">
         <property name="geometry">
          <rect>
           <x>10</x>
@@ -75,7 +75,7 @@
          </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="">
+       <widget class="QWidget" name="layoutWidget">
         <property name="geometry">
          <rect>
           <x>390</x>
@@ -129,7 +129,7 @@
          <string>님 환영합니다</string>
         </property>
        </widget>
-       <widget class="QWidget" name="">
+       <widget class="QWidget" name="layoutWidget">
         <property name="geometry">
          <rect>
           <x>400</x>
@@ -181,7 +181,7 @@
          <x>0</x>
          <y>0</y>
          <width>1001</width>
-         <height>569</height>
+         <height>543</height>
         </rect>
        </property>
        <attribute name="label">
@@ -195,6 +195,9 @@
           <width>581</width>
           <height>301</height>
          </rect>
+        </property>
+        <property name="editTriggers">
+         <set>QAbstractItemView::NoEditTriggers</set>
         </property>
         <column>
          <property name="text">
@@ -228,6 +231,9 @@
         </column>
        </widget>
        <widget class="QTableWidget" name="table_order_management2">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="geometry">
          <rect>
           <x>600</x>
@@ -257,7 +263,7 @@
          </property>
         </column>
        </widget>
-       <widget class="QWidget" name="">
+       <widget class="QWidget" name="layoutWidget">
         <property name="geometry">
          <rect>
           <x>440</x>
@@ -290,7 +296,7 @@
          <x>0</x>
          <y>0</y>
          <width>1001</width>
-         <height>569</height>
+         <height>543</height>
         </rect>
        </property>
        <attribute name="label">
@@ -547,8 +553,487 @@
         </widget>
        </widget>
       </widget>
+      <widget class="QWidget" name="page">
+       <attribute name="label">
+        <string>문의 관리</string>
+       </attribute>
+       <widget class="QStackedWidget" name="stackedWidget">
+        <property name="geometry">
+         <rect>
+          <x>80</x>
+          <y>10</y>
+          <width>801</width>
+          <height>511</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <family>맑은 고딕</family>
+         </font>
+        </property>
+        <property name="currentIndex">
+         <number>1</number>
+        </property>
+        <widget class="QWidget" name="stack_main">
+         <widget class="QPushButton" name="btn_go_qna_manage">
+          <property name="geometry">
+           <rect>
+            <x>270</x>
+            <y>270</y>
+            <width>80</width>
+            <height>30</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>문의 관리</string>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="btn_go_qna_add">
+          <property name="geometry">
+           <rect>
+            <x>380</x>
+            <y>270</y>
+            <width>80</width>
+            <height>30</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>문의 등록</string>
+          </property>
+         </widget>
+        </widget>
+        <widget class="QWidget" name="stack_qna">
+         <widget class="QTableWidget" name="table_qna">
+          <property name="geometry">
+           <rect>
+            <x>20</x>
+            <y>20</y>
+            <width>780</width>
+            <height>480</height>
+           </rect>
+          </property>
+          <property name="horizontalScrollBarPolicy">
+           <enum>Qt::ScrollBarAlwaysOff</enum>
+          </property>
+          <property name="editTriggers">
+           <set>QAbstractItemView::NoEditTriggers</set>
+          </property>
+          <attribute name="verticalHeaderVisible">
+           <bool>false</bool>
+          </attribute>
+          <column>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="font">
+            <font>
+             <family>맑은 고딕</family>
+            </font>
+           </property>
+           <property name="textAlignment">
+            <set>AlignCenter</set>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>주문 번호</string>
+           </property>
+           <property name="font">
+            <font>
+             <family>맑은 고딕</family>
+            </font>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>상품명</string>
+           </property>
+           <property name="font">
+            <font>
+             <family>맑은 고딕</family>
+            </font>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>문의 제목</string>
+           </property>
+           <property name="font">
+            <font>
+             <family>맑은 고딕</family>
+            </font>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>답변 상태</string>
+           </property>
+           <property name="font">
+            <font>
+             <family>맑은 고딕</family>
+            </font>
+           </property>
+          </column>
+         </widget>
+        </widget>
+        <widget class="QWidget" name="stack_qna_detail">
+         <widget class="QLabel" name="label_5">
+          <property name="geometry">
+           <rect>
+            <x>150</x>
+            <y>70</y>
+            <width>60</width>
+            <height>20</height>
+           </rect>
+          </property>
+          <property name="font">
+           <font>
+            <family>맑은 고딕</family>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>문의</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label_question_title">
+          <property name="geometry">
+           <rect>
+            <x>150</x>
+            <y>90</y>
+            <width>500</width>
+            <height>25</height>
+           </rect>
+          </property>
+          <property name="font">
+           <font>
+            <family>맑은 고딕</family>
+            <pointsize>9</pointsize>
+           </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">background-color: rgb(255, 255, 255);</string>
+          </property>
+          <property name="frameShape">
+           <enum>QFrame::Box</enum>
+          </property>
+          <property name="frameShadow">
+           <enum>QFrame::Raised</enum>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+         <widget class="QTextBrowser" name="browser_question_content">
+          <property name="geometry">
+           <rect>
+            <x>150</x>
+            <y>120</y>
+            <width>500</width>
+            <height>200</height>
+           </rect>
+          </property>
+          <property name="font">
+           <font>
+            <family>맑은 고딕</family>
+            <pointsize>9</pointsize>
+           </font>
+          </property>
+          <property name="frameShape">
+           <enum>QFrame::Box</enum>
+          </property>
+          <property name="frameShadow">
+           <enum>QFrame::Raised</enum>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label_9">
+          <property name="geometry">
+           <rect>
+            <x>150</x>
+            <y>340</y>
+            <width>70</width>
+            <height>20</height>
+           </rect>
+          </property>
+          <property name="font">
+           <font>
+            <family>맑은 고딕</family>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>답변 상태 :</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label_answer_status">
+          <property name="geometry">
+           <rect>
+            <x>220</x>
+            <y>340</y>
+            <width>60</width>
+            <height>20</height>
+           </rect>
+          </property>
+          <property name="font">
+           <font>
+            <family>맑은 고딕</family>
+            <pointsize>10</pointsize>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">color: rgb(0, 136, 255);</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label_qna_num">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>580</y>
+            <width>56</width>
+            <height>12</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="btn_answer">
+          <property name="geometry">
+           <rect>
+            <x>570</x>
+            <y>470</y>
+            <width>80</width>
+            <height>30</height>
+           </rect>
+          </property>
+          <property name="font">
+           <font>
+            <family>맑은 고딕</family>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>답변 저장</string>
+          </property>
+         </widget>
+         <widget class="QTextEdit" name="edit_answer">
+          <property name="geometry">
+           <rect>
+            <x>150</x>
+            <y>360</y>
+            <width>500</width>
+            <height>100</height>
+           </rect>
+          </property>
+          <property name="font">
+           <font>
+            <family>맑은 고딕</family>
+            <pointsize>9</pointsize>
+           </font>
+          </property>
+          <property name="frameShape">
+           <enum>QFrame::Box</enum>
+          </property>
+          <property name="frameShadow">
+           <enum>QFrame::Raised</enum>
+          </property>
+         </widget>
+        </widget>
+        <widget class="QWidget" name="stack_add_question">
+         <widget class="QPushButton" name="btn_question_to_main">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>10</y>
+            <width>80</width>
+            <height>30</height>
+           </rect>
+          </property>
+          <property name="font">
+           <font>
+            <family>맑은 고딕</family>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>뒤로가기</string>
+          </property>
+         </widget>
+         <widget class="QLineEdit" name="edit_question_title">
+          <property name="geometry">
+           <rect>
+            <x>150</x>
+            <y>110</y>
+            <width>500</width>
+            <height>25</height>
+           </rect>
+          </property>
+          <property name="frame">
+           <bool>true</bool>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label_12">
+          <property name="geometry">
+           <rect>
+            <x>150</x>
+            <y>90</y>
+            <width>60</width>
+            <height>20</height>
+           </rect>
+          </property>
+          <property name="font">
+           <font>
+            <family>맑은 고딕</family>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>제목</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+         <widget class="QTextEdit" name="edit_question_content">
+          <property name="geometry">
+           <rect>
+            <x>150</x>
+            <y>240</y>
+            <width>500</width>
+            <height>200</height>
+           </rect>
+          </property>
+          <property name="font">
+           <font>
+            <family>맑은 고딕</family>
+            <pointsize>9</pointsize>
+           </font>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label_13">
+          <property name="geometry">
+           <rect>
+            <x>150</x>
+            <y>220</y>
+            <width>60</width>
+            <height>20</height>
+           </rect>
+          </property>
+          <property name="font">
+           <font>
+            <family>맑은 고딕</family>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>내용</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="btn_question">
+          <property name="geometry">
+           <rect>
+            <x>570</x>
+            <y>450</y>
+            <width>80</width>
+            <height>30</height>
+           </rect>
+          </property>
+          <property name="font">
+           <font>
+            <family>맑은 고딕</family>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>문의 등록</string>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label_14">
+          <property name="geometry">
+           <rect>
+            <x>150</x>
+            <y>150</y>
+            <width>60</width>
+            <height>20</height>
+           </rect>
+          </property>
+          <property name="font">
+           <font>
+            <family>맑은 고딕</family>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>상품명</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+         <widget class="QComboBox" name="combo_question_prod">
+          <property name="geometry">
+           <rect>
+            <x>150</x>
+            <y>170</y>
+            <width>240</width>
+            <height>25</height>
+           </rect>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label_15">
+          <property name="geometry">
+           <rect>
+            <x>410</x>
+            <y>150</y>
+            <width>60</width>
+            <height>20</height>
+           </rect>
+          </property>
+          <property name="font">
+           <font>
+            <family>맑은 고딕</family>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>주문번호</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+         <widget class="QLineEdit" name="edit_question_order">
+          <property name="geometry">
+           <rect>
+            <x>410</x>
+            <y>170</y>
+            <width>240</width>
+            <height>25</height>
+           </rect>
+          </property>
+         </widget>
+        </widget>
+       </widget>
+      </widget>
      </widget>
-     <widget class="QWidget" name="">
+     <widget class="QWidget" name="layoutWidget">
       <property name="geometry">
        <rect>
         <x>780</x>
