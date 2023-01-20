@@ -238,7 +238,7 @@ class WindowClass(QMainWindow, form_class):
 
         # 가미버튼
         self.main_menu.currentChanged.connect(self.page_changed)
-        self.page_qna.currentChanged.connect(self.page_changed)
+        self.page_qna.currentChanged.connect(self.page_changed)  # 문제의 그 구간
         self.table_qna.itemDoubleClicked.connect(self.view_question)
         # self.btn_go_qna_manage.clicked.connect(self.go_qna)
         # self.btn_answer_to_qna.clicked.connect(self.go_qna)
