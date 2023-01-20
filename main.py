@@ -59,7 +59,8 @@ class WindowClass(QMainWindow, form_class):
         sql = "SELECT a.num, b.prod_name, c.order_num, a.title, a.content, a.answer " \
               "FROM question a " \
               "LEFT JOIN product b ON a.prod_num = b.prod_num " \
-              "LEFT JOIN `order` c ON a.order_num = c.order_num AND a.prod_num = c.prod_num"
+              "LEFT JOIN `order` c ON a.order_num = c.order_num"
+              # "LEFT JOIN `order` c ON a.order_num = c.order_num AND a.prod_num = c.prod_num"
         print(sql)
         with self.conn_fetch() as cur:
             cur.execute(sql)
@@ -123,6 +124,19 @@ class WindowClass(QMainWindow, form_class):
         if q_title == '' or q_content == '':
             QMessageBox.warning(self, '경고', '제목과 내용 입력란을 확인해주세요')
             return
+
+        if q_order != '':
+            sql = f"SELECT order_num FROM `order` WHERE order_num = {q_order}"
+            print(sql)
+            with self.conn_fetch() as cur:
+                cur.execute(sql)
+                result = cur.fetchall()
+                print(result)
+                print(result[0])
+                print(int(q_order) in result[0])
+                if int(q_order) not in result[0]:
+                    QMessageBox.warning(self, '경고', '입력하신 주문번호가 존재하지 않습니다')
+                    return
 
         if q_prod in self.prod_dic.keys():
             q_prod_num = self.prod_dic[q_prod]
